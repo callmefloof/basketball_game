@@ -10,6 +10,10 @@ namespace Assets.Scripts.AI.State_Machine.States.Base
     {
         public IStateMachineMember Owner { get; protected set; }
 
+        protected State(IStateMachineMember owner)
+        {
+            Owner = owner;
+        }
         public abstract void Enter();
         public abstract void Execute();
         public abstract void Exit();

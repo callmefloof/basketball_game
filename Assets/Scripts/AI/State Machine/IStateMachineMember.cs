@@ -9,5 +9,6 @@ namespace Assets.Scripts.AI.State_Machine
     public interface IStateMachineMember
     {
         public StateMachine StateMachine { get; }
+
     }
 }
