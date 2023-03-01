@@ -12,11 +12,13 @@ public class Baller : MonoBehaviour, IStateMachineMember
     public float step = 0f;
     public UnityEvent<float> Event;
     public bool heldBall = false;
+    private Ball ball;
     public StateMachine StateMachine { get; private set; }
 
     private void Awake()
     {
         StateMachine = new StateMachine();
+        ball = FindFirstObjectByType<Ball>();
     }
 
     void Start()
@@ -45,6 +47,7 @@ public class Baller : MonoBehaviour, IStateMachineMember
             shouldMove = false;
             Debug.Log("Collision detected with player object!");
             Debug.Log("The ball is held? " + heldBall.ToString());
+            ball.PickUp(this);
         }
     }
 }

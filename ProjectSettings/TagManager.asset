@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - AI 2
+  - AI 1
+  - Ball
+  - Floor
   layers:
   - Default
   - TransparentFX

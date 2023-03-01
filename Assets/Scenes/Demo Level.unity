@@ -1035,7 +1035,8 @@ Transform:
   m_LocalPosition: {x: 0.11, y: -1.41, z: -0.98}
   m_LocalScale: {x: 0.08947028, y: 1.1772159, z: 0.1576365}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1481512435}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1068,6 +1069,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 106d5232e384af2499360a2103871589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 1
+  shouldMove: 1
+  step: 0
   Event:
     m_PersistentCalls:
       m_Calls: []
@@ -1086,7 +1090,7 @@ GameObject:
   - component: {fileID: 993728122}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1433,6 +1437,37 @@ Transform:
   m_Father: {fileID: 1764728786}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1481512434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1481512435}
+  m_Layer: 0
+  m_Name: DribblePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1481512435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1481512434}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.66, y: 0, z: 1.19}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 798069143}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1512787777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1543,6 +1578,7 @@ GameObject:
   - component: {fileID: 1653783093}
   - component: {fileID: 1653783092}
   - component: {fileID: 1653783091}
+  - component: {fileID: 1653783096}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Ball
@@ -1644,6 +1680,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1653783096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653783090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cc61c337ee62a142af1860fd02d36da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ballHeldBy: {fileID: 0}
+  _isBeingHeld: 0
+  _rigidBody: {fileID: 0}
+  _dribbleTransform: {fileID: 0}
+  _floorPosition: {x: 0, y: 0, z: 0}
+  _isHittingFloor: 0
+  _dribbleTime: 6
 --- !u!1 &1702667499
 GameObject:
   m_ObjectHideFlags: 0
