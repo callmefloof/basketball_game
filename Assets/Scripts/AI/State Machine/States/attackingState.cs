@@ -37,8 +37,10 @@ namespace Assets.Scripts.AI.State_Machine.States
             var step = baller.speed * Time.deltaTime;
             basketballPosition = GameObject.FindWithTag("Ball").transform.position;
             pos = GameObject.FindWithTag("AI 1").transform.position;
-            baller.transform.position = Vector3.MoveTowards(pos, basketballPosition, step);
-            
+            // baller.transform.position = Vector3.MoveTowards(pos, basketballPosition, step);
+            baller.navMeshAgent.SetDestination(basketballPosition);
+
+
             if (baller.heldBall) {
                 baller.speed = 0f; // stop moving if ball is held
                 baller.StateMachine.ChangeState(new Examine(baller));

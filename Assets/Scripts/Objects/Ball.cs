@@ -19,6 +19,7 @@ public class Ball : MonoBehaviour
     [SerializeField] private float _dribbleTime = 5f;
     private SphereCollider _sphereCollider;
     [SerializeField] private float _dribbleAmplitude = 0.8f;
+    [SerializeField] private bool _drop = false;
     void Start()
     {
         _floorPosition = GameObject.FindGameObjectWithTag("Floor").transform.position;
@@ -32,17 +33,20 @@ public class Ball : MonoBehaviour
     {
         if (!_isBeingHeld) return;
         if (_ballHeldBy == null) return;
-        
-
+        if (_drop)
+        {
+            Drop();
+            _drop = false;
+        }
     }
 
     public void PickUp(IStateMachineMember baller)
     {
         Drop();
+        
         _ballHeldBy = baller as Baller;
         if (_ballHeldBy == null) return;
         _dribbleTransform = _ballHeldBy.transform.GetChild(0);
-        transform.parent = _dribbleTransform;
         _isBeingHeld = true;
         _rigidBody.isKinematic = true;
         
@@ -62,7 +66,6 @@ public class Ball : MonoBehaviour
 
     public void Drop()
     {
-        transform.parent = null;
         _ballHeldBy = null;
         _isBeingHeld = false;
         _rigidBody.isKinematic = false;
@@ -79,8 +82,8 @@ public class Ball : MonoBehaviour
             {
                 continue;
             }
-            Vector3 landingSpot = new Vector3(_dribbleTransform.position.x, _floorPosition.y + _sphereCollider.radius, _dribbleTransform.position.z);
-            _rigidBody.position = landingSpot + Vector3.up * Mathf.Abs(Mathf.Sin(Time.time * _dribbleTime)* _dribbleAmplitude);
+            Vector3 landingSpot = new Vector3(_dribbleTransform.position.x, _floorPosition.y + _sphereCollider.radius /2, _dribbleTransform.position.z);
+            _rigidBody.position = landingSpot + Vector3.up * Mathf.Abs(Mathf.Sin(Time.time * _dribbleTime));
         }
     }
 
