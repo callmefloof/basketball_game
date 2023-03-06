@@ -8,6 +8,9 @@ TagManager:
   - AI 1
   - Ball
   - Floor
+  - Attacking Side
+  - Defending Side
+  - Hoop
   layers:
   - Default
   - TransparentFX

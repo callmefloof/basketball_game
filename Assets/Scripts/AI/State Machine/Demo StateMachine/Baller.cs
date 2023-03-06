@@ -13,6 +13,7 @@ public class Baller : MonoBehaviour, IStateMachineMember
     public float step = 0f;
     public UnityEvent<float> Event;
     public bool heldBall = false;
+    public bool attackingSide = false;
     private Ball ball;
     public NavMeshAgent navMeshAgent;
     public StateMachine StateMachine { get; private set; }
@@ -52,6 +53,11 @@ public class Baller : MonoBehaviour, IStateMachineMember
             Debug.Log("Collision detected with player object!");
             Debug.Log("The ball is held? " + heldBall.ToString());
             ball.PickUp(this);
+        }
+
+        if (collision.gameObject.tag == "Attacking Side")
+        {
+            attackingSide = true; 
         }
     }
 

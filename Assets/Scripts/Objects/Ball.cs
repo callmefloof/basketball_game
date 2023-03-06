@@ -52,6 +52,18 @@ public class Ball : MonoBehaviour
         
     }
 
+    public void SetTrajectory(Vector3 direction, float angle, float force)
+    {
+        float gravity = Physics.gravity.magnitude;
+        float radianAngle = angle * Mathf.Deg2Rad;
+        float height = Mathf.Sin(radianAngle) * force * force / (2.0f * gravity);
+        float distance = Mathf.Cos(radianAngle) * force * force / gravity;
+        Vector3 velocity = direction * distance + Vector3.up * height;
+        velocity = velocity.normalized * force;
+
+        GetComponent<Rigidbody>().velocity = velocity;
+    }
+
     private void SetDribbleConstrains(bool constrained)
     {
         if (constrained)
@@ -89,11 +101,19 @@ public class Ball : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        
+        if (collision.collider.tag == "hoop")
+        {
+            _rigidBody.isKinematic = false;
+        }
+        
         if (collision.collider.tag != "floor") return;
         if (_isBeingHeld && _ballHeldBy != null)
         {
             _isHittingFloor = true;
         }
+
+        
     }
 
     void OnCollisionExit(Collision other)

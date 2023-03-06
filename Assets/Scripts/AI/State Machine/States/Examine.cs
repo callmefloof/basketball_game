@@ -25,10 +25,11 @@ namespace Assets.Scripts.AI.State_Machine.States.Base
             {
                 baller.StateMachine.ChangeState(new AttackingState(baller));
             }
-            else
+            else 
             {
                 baller.StateMachine.ChangeState(new ShootingState(baller));
             }
+            
         }
         //Don't use with examine State
         public override void Exit()
