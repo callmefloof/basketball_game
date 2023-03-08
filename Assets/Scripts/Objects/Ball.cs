@@ -10,8 +10,8 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] private Baller _ballHeldBy;
-    [SerializeField] private bool _isBeingHeld = false;
+    [SerializeField] public Baller ballHeldBy;
+    [SerializeField] public bool isBeingHeld = false;
     [SerializeField] private Rigidbody _rigidBody;
     [SerializeField] private Transform _dribbleTransform;
     [SerializeField] private Vector3 _floorPosition;
@@ -31,8 +31,8 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!_isBeingHeld) return;
-        if (_ballHeldBy == null) return;
+        if (!isBeingHeld) return;
+        if (ballHeldBy == null) return;
         if (_drop)
         {
             Drop();
@@ -44,10 +44,10 @@ public class Ball : MonoBehaviour
     {
         Drop();
         
-        _ballHeldBy = baller as Baller;
-        if (_ballHeldBy == null) return;
-        _dribbleTransform = _ballHeldBy.transform.GetChild(0);
-        _isBeingHeld = true;
+        ballHeldBy = baller as Baller;
+        if (ballHeldBy == null) return;
+        _dribbleTransform = ballHeldBy.transform.GetChild(0);
+        isBeingHeld = true;
         _rigidBody.isKinematic = true;
         
     }
@@ -78,8 +78,8 @@ public class Ball : MonoBehaviour
 
     public void Drop()
     {
-        _ballHeldBy = null;
-        _isBeingHeld = false;
+        ballHeldBy = null;
+        isBeingHeld = false;
         _rigidBody.isKinematic = false;
         _dribbleTransform = null;
         return;
@@ -90,7 +90,7 @@ public class Ball : MonoBehaviour
         while (true)
         {
             yield return new WaitForFixedUpdate();
-            if (!_isBeingHeld)
+            if (!isBeingHeld)
             {
                 continue;
             }
@@ -108,7 +108,7 @@ public class Ball : MonoBehaviour
         }
         
         if (collision.collider.tag != "floor") return;
-        if (_isBeingHeld && _ballHeldBy != null)
+        if (isBeingHeld && ballHeldBy != null)
         {
             _isHittingFloor = true;
         }
@@ -119,7 +119,7 @@ public class Ball : MonoBehaviour
     void OnCollisionExit(Collision other)
     {
         if (other.collider.tag != "floor") return;
-        if (_isBeingHeld && _ballHeldBy != null )
+        if (isBeingHeld && ballHeldBy != null )
         {
             _isHittingFloor = false;
         }

@@ -955,6 +955,7 @@ GameObject:
   - component: {fileID: 798069145}
   - component: {fileID: 798069146}
   - component: {fileID: 798069147}
+  - component: {fileID: 798069148}
   m_Layer: 0
   m_Name: 'BALLER '
   m_TagString: AI 1
@@ -1079,6 +1080,8 @@ MonoBehaviour:
   heldBall: 0
   attackingSide: 0
   navMeshAgent: {fileID: 0}
+  navMeshObstacle: {fileID: 0}
+  team: 1
 --- !u!195 &798069147
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1101,6 +1104,22 @@ NavMeshAgent:
   m_BaseOffset: 0.49999997
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!208 &798069148
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798069139}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1, y: 0.5, z: 1}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &993728121
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,8 +1753,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc61c337ee62a142af1860fd02d36da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ballHeldBy: {fileID: 0}
-  _isBeingHeld: 0
+  ballHeldBy: {fileID: 0}
+  isBeingHeld: 0
   _rigidBody: {fileID: 0}
   _dribbleTransform: {fileID: 0}
   _floorPosition: {x: 0, y: 0, z: 0}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.AI.Environment;
 using Assets.Scripts.AI.State_Machine;
 using Assets.Scripts.AI.State_Machine.States.Base;
 using UnityEngine;
@@ -16,12 +17,17 @@ public class Baller : MonoBehaviour, IStateMachineMember
     public bool attackingSide = false;
     private Ball ball;
     public NavMeshAgent navMeshAgent;
+    public NavMeshObstacle navMeshObstacle;
+    public int team = 1;
+    public EnvironmentInfoComponent environmentInfoComponent;
     public StateMachine StateMachine { get; private set; }
 
     private void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshObstacle = GetComponent<NavMeshObstacle>();
         StateMachine = new StateMachine();
+        environmentInfoComponent = new EnvironmentInfoComponent(this);
         ball = FindFirstObjectByType<Ball>();
     }
 
