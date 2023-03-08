@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using JetBrains.Annotations;
 using TMPro;
@@ -44,7 +45,6 @@ namespace Assets.Scripts.AI.Environment
         public readonly int maxAvoidancePriority = 0;
 
         public BallerInfo BallerSuggestion { get; private set; }
-
         public EnvironmentInfoComponent(Baller owner)
         {
             Owner = owner;
@@ -55,7 +55,6 @@ namespace Assets.Scripts.AI.Environment
             EnemyHoop = GameObject.FindGameObjectWithTag("Hoop");
 
         }
-
         private (List<Baller> enemyBallers, List<Baller> teamBallers) GetTeams()
         {
             var ballers = Object.FindObjectsOfType<Baller>();
@@ -74,7 +73,6 @@ namespace Assets.Scripts.AI.Environment
             }
             return (enemyBallers, teamBallers);
         }
-
         private (float enemyHoopDistance, float ownerHoopDistance) GetHoopDistances()
         {
             //set y to 0 to return a "2D" result.
@@ -84,7 +82,6 @@ namespace Assets.Scripts.AI.Environment
 
             return (Vector3.Distance(ownerPosFlattened, enemyHoopPosFlattened), Vector3.Distance(ownerPosFlattened, ownerHoopPosFlattened));
         }
-
         private (float enemyHoopDistance, float ownerHoopDistance) GetHoopDistances(Baller baller)
         {
             //set y to 0 to return a "2D" result.
@@ -94,78 +91,36 @@ namespace Assets.Scripts.AI.Environment
 
             return (Vector3.Distance(ownerPosFlattened, enemyHoopPosFlattened), Vector3.Distance(ownerPosFlattened, ownerHoopPosFlattened));
         }
-
         private (List<float> enemyDistances, List<float> teamDistances) GetDistances()
         {
-            List<float> enemyBallerDistances = new List<float>();
-            List<float> ourTeamMembersDistances = new List<float>();
-            foreach (Baller enemyBaller in EnemyTeam)
-            {
-                    enemyBallerDistances.Add(Vector3.Distance(Owner.transform.position, enemyBaller.transform.position));
-            }
-            foreach (Baller teamBaller in Team)
-            {
-                if(teamBaller != Owner) ourTeamMembersDistances.Add(Vector3.Distance(Owner.transform.position, teamBaller.transform.position));
-            }
+            List<float> enemyBallerDistances = EnemyTeam.Select(enemyBaller => Vector3.Distance(Owner.transform.position, enemyBaller.transform.position)).ToList();
+
+            List<float> ourTeamMembersDistances = (from teamBaller in Team where teamBaller != Owner select Vector3.Distance(Owner.transform.position, teamBaller.transform.position)).ToList();
             return (enemyBallerDistances, ourTeamMembersDistances);
         }
-
         private (List<float> enemyDistances, List<float> teamDistances) GetDistances(Baller baller)
         {
-            List<float> enemyBallerDistances = new List<float>();
-            List<float> ourTeamMembersDistances = new List<float>();
-            foreach (Baller enemyBaller in baller.environmentInfoComponent.EnemyTeam)
-            {
-                enemyBallerDistances.Add(Vector3.Distance(baller.transform.position, enemyBaller.transform.position));
-            }
-            foreach (Baller teamBaller in baller.environmentInfoComponent.Team)
-            {
-                if (teamBaller != Owner) ourTeamMembersDistances.Add(Vector3.Distance(baller.transform.position, teamBaller.transform.position));
-            }
+            List<float> enemyBallerDistances = baller.environmentInfoComponent.EnemyTeam.Select(enemyBaller => Vector3.Distance(baller.transform.position, enemyBaller.transform.position)).ToList();
+            List<float> ourTeamMembersDistances = (from teamBaller in baller.environmentInfoComponent.Team where teamBaller != Owner select Vector3.Distance(baller.transform.position, teamBaller.transform.position)).ToList();
             return (enemyBallerDistances, ourTeamMembersDistances);
         }
-
         private void SetAvoidance()
         {
             Owner.navMeshAgent.avoidancePriority = Mathf.FloorToInt(Mathf.Lerp(minAvoidancePriority, maxAvoidanceDistance, Aggression));
             Owner.navMeshAgent.radius = Mathf.FloorToInt(Mathf.Lerp(minAvoidanceDistance, maxAvoidanceDistance, Defensiveness));
         }
-
         private bool ShouldPickUpBall((List<float> enemyDistances, List<float> teamDistances) ballerDistances, Vector3 ownerPosition)
         {
             if (Aggression > 0.5f) return true;
 
-            foreach (var ballerDistance in ballerDistances.teamDistances)
-            {
-                if (!(Vector3.Distance(ownerPosition, Ball.transform.position) < ballerDistance))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return ballerDistances.teamDistances.All(ballerDistance => Vector3.Distance(ownerPosition, Ball.transform.position) < ballerDistance);
         }
-
         private bool ShouldIntercept((float enemyHoopDistance, float ownerHoopDistance) distancesToHoops, (List<float> enemyDistances, List<float> teamDistances) ballerDistances, Vector3 ownerPosition)
         {
-            foreach (var baller in Team)
-            {
-                if ((distancesToHoops.enemyHoopDistance > GetHoopDistances(baller).enemyHoopDistance &&
-                    Aggression < 0.5f) )
-                {
-                    return false;
-                }
-            }
-            foreach (var baller in EnemyTeam)
-            {
-                if ((distancesToHoops.ownerHoopDistance < GetHoopDistances(baller).enemyHoopDistance &&
-                     Defensiveness > 0.5f))
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (Team.Any(baller => (distancesToHoops.enemyHoopDistance > GetHoopDistances(baller).enemyHoopDistance &&
+                                    Aggression < 0.5f))) return false;
+            return EnemyTeam.Any(baller => (distancesToHoops.ownerHoopDistance < GetHoopDistances(baller).enemyHoopDistance && Defensiveness > 0.5f));
         }
-
         public void UpdateInfo()
         {
             SetAvoidance();
@@ -173,20 +128,21 @@ namespace Assets.Scripts.AI.Environment
             var distancesToHoops = GetHoopDistances();
             var ballerDistances = GetDistances();
             var ownerPosition = Owner.transform.position;
-            switch (Ball.isBeingHeld)
+            BallerSuggestion = Ball.isBeingHeld switch
             {
                 // TODO: determine what part of the field the baller is on.
                 // check to see if we're holding the ball
-                case true when Ball.ballHeldBy == Owner && Owner.heldBall:
-                    BallerSuggestion = distancesToHoops.enemyHoopDistance < 10 * (1 + Aggression) ? BallerInfo.ShouldShoot : BallerInfo.ShouldGetCloserToEnemyHoop;
-                    break;
-                case true:
-                    BallerSuggestion = ShouldIntercept(distancesToHoops, ballerDistances, ownerPosition) ? BallerInfo.ShouldAttack : BallerInfo.ShouldGetCloserToTeamHoop; 
-                    break;
-                case false:
-                    BallerSuggestion = ShouldPickUpBall(ballerDistances, ownerPosition) ? BallerInfo.ShouldAttack : BallerInfo.ShouldDefend;
-                    break;
-            }
+                true when Ball.ballHeldBy == Owner && Owner.heldBall => distancesToHoops.enemyHoopDistance <
+                                                                        10 * (1 + Aggression)
+                    ? BallerInfo.ShouldShoot
+                    : BallerInfo.ShouldGetCloserToEnemyHoop,
+                true => ShouldIntercept(distancesToHoops, ballerDistances, ownerPosition)
+                    ? BallerInfo.ShouldAttack
+                    : BallerInfo.ShouldGetCloserToTeamHoop,
+                false => ShouldPickUpBall(ballerDistances, ownerPosition)
+                    ? BallerInfo.ShouldAttack
+                    : BallerInfo.ShouldDefend
+            };
         }
     }
 }
