@@ -24,14 +24,14 @@ namespace Assets.Scripts.AI.Environment
         public float Aggression
         {
             get => _aggression;
-            set => _aggression = value < 1 ? 1 : value < 0 ? 0 : value;
+            set => _aggression = value > 1 ? 1 : value < 0 ? 0 : value;
         }
 
         private float _defensiveness = 0.5f;
         public float Defensiveness
         {
             get => _defensiveness;
-            set => _defensiveness = value < 1 ? 1 : value < 0 ? 0 : value;
+            set => _defensiveness = value > 1 ? 1 : value < 0 ? 0 : value;
         }
 
         public readonly float maxAvoidanceDistance = 10f;
