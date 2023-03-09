@@ -1,81 +1,84 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Assets.Scripts.AI.Environment;
-using Assets.Scripts.AI.State_Machine;
-using Assets.Scripts.AI.State_Machine.States.Base;
+using Assets.Scripts.AI.State_Machine.States;
+using Assets.Scripts.Objects;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-public class Baller : MonoBehaviour, IStateMachineMember
+
+namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
 {
-    public float speed = 200f;
-    public bool shouldMove = true; // Flag to control whether the player should move or not
-    public float step = 0f;
-    public UnityEvent<float> Event;
-    public bool heldBall = false;
-    public bool attackingSide = false;
-    private Ball ball;
-    public NavMeshAgent navMeshAgent;
-    public NavMeshObstacle navMeshObstacle;
-    public int team = 1;
-    public EnvironmentInfoComponent environmentInfoComponent;
-    public StateMachine StateMachine { get; private set; }
-
-    private void Awake()
+    public class Baller : MonoBehaviour, IStateMachineMember
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        navMeshObstacle = GetComponent<NavMeshObstacle>();
-        StateMachine = new StateMachine();
-        environmentInfoComponent = new EnvironmentInfoComponent(this);
-        ball = FindFirstObjectByType<Ball>();
-    }
+        public float speed = 200f;
+        public bool shouldMove = true; // Flag to control whether the player should move or not
+        public float step = 0f;
+        public UnityEvent<float> Event;
+        public bool heldBall = false;
+        public bool attackingSide = false;
+        private Ball ball;
+        public NavMeshAgent navMeshAgent;
+        public NavMeshObstacle navMeshObstacle;
+        public int team = 1;
+        public EnvironmentInfoComponent environmentInfoComponent;
+        public StateMachine StateMachine { get; private set; }
 
-    void Start()
-    {
-        if (StateMachine.CurrentState == null)
+        private void Awake()
         {
-            StateMachine.ChangeState(new Examine(this));
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            navMeshObstacle = GetComponent<NavMeshObstacle>();
+            StateMachine = new StateMachine();
+            environmentInfoComponent = new EnvironmentInfoComponent(this);
+            ball = FindFirstObjectByType<Ball>();
         }
-    }
 
-    void Update()
-    {
-        if (StateMachine != null)
+        void Start()
         {
-            StateMachine.Update();
+            if (StateMachine.CurrentState == null)
+            {
+                StateMachine.ChangeState(new Examine(this));
+            }
         }
+
+        void Update()
+        {
+            if (StateMachine != null)
+            {
+                StateMachine.Update();
+            }
  
-        step = speed * Time.deltaTime; // calculate distance to move
-        navMeshAgent.speed = step;
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Ball")
+            step = speed * Time.deltaTime; // calculate distance to move
+            navMeshAgent.speed = step;
+            environmentInfoComponent.UpdateInfo();
+            Debug.Log("Team " +team + ": "+ environmentInfoComponent.BallerSuggestion);
+        }
+        
+        void OnCollisionEnter(Collision collision)
         {
-            heldBall = true;
-            shouldMove = false;
-            Debug.Log("Collision detected with player object!");
-            Debug.Log("The ball is held? " + heldBall.ToString());
-            ball.PickUp(this);
+            if (collision.gameObject.tag == "Ball")
+            {
+                heldBall = true;
+                shouldMove = false;
+                Debug.Log("Collision detected with player object!");
+                Debug.Log("The ball is held? " + heldBall.ToString());
+                ball.PickUp(this);
+            }
+
+            if (collision.gameObject.tag == "Attacking Side")
+            {
+                attackingSide = true; 
+            }
         }
 
-        if (collision.gameObject.tag == "Attacking Side")
+        void OnCollisionStay(Collision collision)
         {
-            attackingSide = true; 
-        }
-    }
-
-    void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.tag == "Ball")
-        {
-            heldBall = true;
-            shouldMove = false;
-            Debug.Log("Collision detected with player object!");
-            Debug.Log("The ball is held? " + heldBall.ToString());
-            ball.PickUp(this);
+            if (collision.gameObject.tag == "Ball")
+            {
+                heldBall = true;
+                shouldMove = false;
+                Debug.Log("Collision detected with player object!");
+                Debug.Log("The ball is held? " + heldBall.ToString());
+                ball.PickUp(this);
+            }
         }
     }
 }

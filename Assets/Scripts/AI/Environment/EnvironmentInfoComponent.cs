@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using JetBrains.Annotations;
 using TMPro;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Assets.Scripts.Objects;
 using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.AI.Environment
@@ -35,11 +37,12 @@ namespace Assets.Scripts.AI.Environment
             set => _defensiveness = value > 1 ? 1 : value < 0 ? 0 : value;
         }
 
-        public readonly float maxAvoidanceDistance = 10f;
+        public readonly float maxAvoidanceDistance = 5f;
         public readonly float minAvoidanceDistance = 0.5f;
         /*
          *  The avoidance priority level.
             When the agent is performing avoidance, agents of lower priority are ignored. The valid range is from 0 to 99 where: Most important = 0. Least important = 99. Default = 50.
+            NOTE: 0 is too low for it to meaningly move
          */
         public readonly int minAvoidancePriority = 99;
         public readonly int maxAvoidancePriority = 0;
@@ -52,7 +55,8 @@ namespace Assets.Scripts.AI.Environment
             EnemyTeam.AddRange(teamresults.enemyBallers);
             Team.AddRange(teamresults.teamBallers);
             Ball = Object.FindFirstObjectByType<Ball>();
-            EnemyHoop = GameObject.FindGameObjectWithTag("Hoop");
+            EnemyHoop = GameObject.FindGameObjectsWithTag("Hoop").First(x => x.GetComponent<Hoop>().team != Owner.team);
+            OurHoop = GameObject.FindGameObjectsWithTag("Hoop").First(x => x.GetComponent<Hoop>().team == Owner.team);
 
         }
         private (List<Baller> enemyBallers, List<Baller> teamBallers) GetTeams()
@@ -136,6 +140,7 @@ namespace Assets.Scripts.AI.Environment
                                                                         10 * (1 + Aggression)
                     ? BallerInfo.ShouldShoot
                     : BallerInfo.ShouldGetCloserToEnemyHoop,
+                true when Team.Any(x=> Ball.ballHeldBy == x) => BallerInfo.ShouldDefend,
                 true => ShouldIntercept(distancesToHoops, ballerDistances, ownerPosition)
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldGetCloserToTeamHoop,
