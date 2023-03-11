@@ -1,11 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Assets.Scripts.AI.State_Machine;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 namespace Assets.Scripts.Objects
@@ -23,9 +18,13 @@ namespace Assets.Scripts.Objects
         private SphereCollider _sphereCollider;
         [SerializeField] private float _dribbleAmplitude = 0.8f;
         [SerializeField] private bool _drop = false;
+        private Vector3 originalPos;
+        private Quaternion originalRot;
 
         void Start()
         {
+            originalPos = transform.position;
+            originalRot = transform.rotation;
             _floorPosition = GameObject.FindGameObjectWithTag("Floor").transform.position;
             _rigidBody = GetComponent<Rigidbody>();
             _sphereCollider = GetComponent<SphereCollider>();
@@ -55,17 +54,54 @@ namespace Assets.Scripts.Objects
             _rigidBody.isKinematic = true;
 
         }
-
-        public void SetTrajectory(Vector3 direction, float angle, float force)
+        public bool test = false;
+        public bool isBeingShot = false;
+        public IEnumerator SetTrajectory(Vector3 direction, float angle, float force)
         {
-            float gravity = Physics.gravity.magnitude;
-            float radianAngle = angle * Mathf.Deg2Rad;
-            float height = Mathf.Sin(radianAngle) * force * force / (2.0f * gravity);
-            float distance = Mathf.Cos(radianAngle) * force * force / gravity;
-            Vector3 velocity = direction * distance + Vector3.up * height;
-            velocity = velocity.normalized * force;
+            //float gravity = Physics.gravity.magnitude;
+            //float radianAngle = angle * Mathf.Deg2Rad;
+            //float height = Mathf.Sin(radianAngle) * force * force / (2.0f * gravity);
+            //float distance = Mathf.Cos(radianAngle) * force * force / gravity;
+            //Vector3 velocity = direction * distance + Vector3.up * height;
+            //velocity = velocity.normalized * force;
 
-            GetComponent<Rigidbody>().velocity = velocity;
+            //GetComponent<Rigidbody>().velocity = velocity;
+            
+            if (!test)
+            {
+                
+                
+                Drop();
+                
+                isBeingShot = true;
+                Vector3 ballXZPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+                var enemyHoopPos = ballHeldBy.environmentInfoComponent.EnemyHoop.transform.position;
+                Vector3 targetXZPos = new Vector3(enemyHoopPos.x, transform.position.y, enemyHoopPos.z);
+                transform.LookAt(targetXZPos);
+                double R = Vector3.Distance(ballXZPos, targetXZPos);
+                //angle = Mathf.Atan2((enemyHoopPos.y - transform.position.y), (enemyHoopPos.x - transform.position.x)) * Mathf.Rad2Deg+10;
+                angle = Random.Range(40f, 70f);
+                double G = Physics.gravity.y;
+                double tanAlpha = Mathf.Tan(angle * Mathf.Deg2Rad);
+                double H = (enemyHoopPos.y) - transform.position.y;
+                double step1 = G * R * R;
+                double step2 = (2.0f * (H - R * tanAlpha));
+                double step3 = step1 / step2;
+
+                double Vz = (float)System.Math.Sqrt(Mathf.Abs((float)step3));
+
+                double Vy = tanAlpha * Vz;
+                var localVel = new Vector3(0f, (float)Vy, (float)Vz);
+                var globalVel = transform.TransformDirection(localVel);
+                
+                _rigidBody.velocity = globalVel;
+                Debug.Log(globalVel);
+                yield return new WaitForSeconds(1f);
+                isBeingShot = false;
+                
+            }
+            
+
         }
 
         private void SetDribbleConstrains(bool constrained)
@@ -82,10 +118,11 @@ namespace Assets.Scripts.Objects
 
         public void Drop()
         {
-            ballHeldBy = null;
+            //ballHeldBy = null;
             isBeingHeld = false;
+            if (ballHeldBy != null) ballHeldBy.heldBall = false;
             _rigidBody.isKinematic = false;
-            _dribbleTransform = null;
+            //_dribbleTransform = null;
             return;
         }
 
@@ -107,8 +144,12 @@ namespace Assets.Scripts.Objects
 
         void OnCollisionEnter(Collision collision)
         {
+            if (collision.collider.tag == "BallReset")
+            {
+                transform.SetPositionAndRotation(originalPos, originalRot);
+            }
 
-            if (collision.collider.tag == "hoop")
+            if (collision.collider.tag == "Hoop")
             {
                 _rigidBody.isKinematic = false;
             }

@@ -54,7 +54,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         
         void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.tag == "Ball")
+            if (collision.gameObject.tag == "Ball" && !collision.gameObject.GetComponent<Ball>().isBeingShot)
             {
                 heldBall = true;
                 shouldMove = false;
@@ -71,7 +71,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
 
         void OnCollisionStay(Collision collision)
         {
-            if (collision.gameObject.tag == "Ball")
+            if (collision.gameObject.tag == "Ball" && !collision.gameObject.GetComponent<Ball>().isBeingShot)
             {
                 heldBall = true;
                 shouldMove = false;

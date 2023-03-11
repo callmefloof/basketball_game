@@ -30,9 +30,11 @@ namespace Assets.Scripts.Objects
                 {
                     case 1:
                         GameManager.Instance.Scores["Team 2"]++;
+                        Debug.Log("Team 1 scored");
                         break;
                     case 2:
                         GameManager.Instance.Scores["Team 1"]++;
+                        Debug.Log("Team 2 scored");
                         break;
 
                 }

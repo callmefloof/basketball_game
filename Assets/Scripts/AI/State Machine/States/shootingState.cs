@@ -32,7 +32,6 @@ namespace Assets.Scripts.AI.State_Machine.States
             
             //Call the drop function from the ball script   
             
-            ballObject.Drop();
             
             // get the position of the hoop
             
@@ -67,11 +66,11 @@ namespace Assets.Scripts.AI.State_Machine.States
             
             // Create a angle based on the distance of the player to the hoop
 
-            float angle = Mathf.Atan2((hoopPosition.y - baller.transform.position.y), distance) * Mathf.Rad2Deg;
+            float angle = Mathf.Atan2((hoopPosition.y - ballObject.transform.position.y), distance) * Mathf.Rad2Deg;
             
             // Call Trajectory Function in Ball script 
 
-            ballObject.SetTrajectory(direction, angle, force);
+            ballObject.StartCoroutine(ballObject.SetTrajectory(direction, angle, force));
             
             //In order to make it more like a basketball shot we need to apply some gravity 
 
