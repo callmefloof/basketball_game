@@ -30,54 +30,18 @@ namespace Assets.Scripts.AI.State_Machine.States
         public override void Execute()
         {
             
-            //Call the drop function from the ball script   
-            
-            
-            // get the position of the hoop
-            
-            hoopPosition = GameObject.FindWithTag("Hoop").transform.position;
-            
-            //Calculate the distance of the ball to the hoop
+           
+            var targetHoop = baller.environmentInfoComponent.EnemyHoop.transform.position;
+            //Level Y to the baller so we don't tilt
+            var targetHoopXZ = new Vector3(targetHoop.x, baller.transform.position.y, targetHoop.z);
+            baller.navMeshAgent.updateRotation = false;
+            baller.navMeshAgent.updatePosition = false;
+            baller.transform.LookAt(targetHoopXZ);
 
-            float distance = Vector3.Distance(baller.transform.position, hoopPosition);
-            
-            //Calculate the direction to the hoop
-            
-            Vector3 direction = hoopPosition - baller.transform.position;
-            
-            //Add some randomness to the throw so its not always the same
-            
-            direction += Random.insideUnitSphere * distance * 0.5f;
-            
-            //Add a vertical component to the direction from the player's distance to the hoop
-            
-            //Clamp is used to ensure the force and height are within reasonable limits 
+            ballObject.StartCoroutine(ballObject.ShootBall());
 
-            float height = Mathf.Clamp(distance * 0.2f, 0.2f, 1f);
-            direction += Vector3.up * height;    
-
-            //Normalise function in order to normalise the vector
-            
-            direction.Normalize();
-            
-            // Set the force of the throw
-
-            float force = Mathf.Clamp(distance * 0.1f, 0.1f, 1f);
-            
-            // Create a angle based on the distance of the player to the hoop
-
-            float angle = Mathf.Atan2((hoopPosition.y - ballObject.transform.position.y), distance) * Mathf.Rad2Deg;
-            
-            // Call Trajectory Function in Ball script 
-
-            ballObject.StartCoroutine(ballObject.SetTrajectory(direction, angle, force));
-            
-            //In order to make it more like a basketball shot we need to apply some gravity 
-
-            //float gravity = Physics.gravity.y;
-            
-           // ballRigidbody.AddForce(Vector3.down * gravity * ballRigidbody.mass * 0.1f, ForceMode.Force);
-
+            baller.navMeshAgent.updateRotation = true;
+            baller.navMeshAgent.updatePosition = true;
             baller.StateMachine.ChangeState(new Examine(baller));
         }
 

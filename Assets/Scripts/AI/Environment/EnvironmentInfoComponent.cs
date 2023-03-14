@@ -20,8 +20,8 @@ namespace Assets.Scripts.AI.Environment
         public Baller Owner { get; private set; }
         public List<Baller> Team { get; private set; } = new List<Baller>();
         public List<Baller> EnemyTeam { get; private set; } = new List<Baller>();
-        public GameObject OurHoop { get; private set; }
-        public GameObject EnemyHoop { get; private set; }
+        public Hoop OurHoop { get; private set; }
+        public Hoop EnemyHoop { get; private set; }
         public Ball Ball { get; private set; }
         private float _aggression = 0.5f;
         public float Aggression
@@ -55,8 +55,8 @@ namespace Assets.Scripts.AI.Environment
             EnemyTeam.AddRange(teamresults.enemyBallers);
             Team.AddRange(teamresults.teamBallers);
             Ball = Object.FindFirstObjectByType<Ball>();
-            EnemyHoop = GameObject.FindGameObjectsWithTag("Hoop").First(x => x.GetComponent<Hoop>().team != Owner.team);
-            OurHoop = GameObject.FindGameObjectsWithTag("Hoop").First(x => x.GetComponent<Hoop>().team == Owner.team);
+            EnemyHoop = Object.FindObjectsOfType<Hoop>().First(x => x.team != Owner.team);
+            OurHoop = Object.FindObjectsOfType<Hoop>().First(x => x.team == Owner.team);
 
         }
         private (List<Baller> enemyBallers, List<Baller> teamBallers) GetTeams()

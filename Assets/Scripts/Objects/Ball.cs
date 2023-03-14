@@ -56,7 +56,7 @@ namespace Assets.Scripts.Objects
         }
         public bool test = false;
         public bool isBeingShot = false;
-        public IEnumerator SetTrajectory(Vector3 direction, float angle, float force)
+        public IEnumerator ShootBall()
         {
             //float gravity = Physics.gravity.magnitude;
             //float radianAngle = angle * Mathf.Deg2Rad;
@@ -78,12 +78,18 @@ namespace Assets.Scripts.Objects
                 var enemyHoopPos = ballHeldBy.environmentInfoComponent.EnemyHoop.transform.position;
                 Vector3 targetXZPos = new Vector3(enemyHoopPos.x, transform.position.y, enemyHoopPos.z);
                 transform.LookAt(targetXZPos);
-                double R = Vector3.Distance(ballXZPos, targetXZPos);
-                //angle = Mathf.Atan2((enemyHoopPos.y - transform.position.y), (enemyHoopPos.x - transform.position.x)) * Mathf.Rad2Deg+10;
-                angle = Random.Range(40f, 70f);
+                float R = Vector3.Distance(ballXZPos, targetXZPos);
+                float H = (enemyHoopPos.y) - transform.position.y;
+                //float anglePlayerHoop = Mathf.Atan2((enemyHoopPos.y + 10f - transform.position.y), (enemyHoopPos.x+2f - transform.position.x)) * Mathf.Rad2Deg;
+
+                float angle = Mathf.Atan(H / R + Mathf.Sqrt((H*H)/(R*R) +1)) * Mathf.Rad2Deg;
+                //angle = Random.Range(40f, 70f);
+                //
+                //angle = (float)((2f/17f) * (90f + anglePlayerHoop) * R);
                 double G = Physics.gravity.y;
                 double tanAlpha = Mathf.Tan(angle * Mathf.Deg2Rad);
-                double H = (enemyHoopPos.y) - transform.position.y;
+                Debug.Log("angle: " + angle);
+                
                 double step1 = G * R * R;
                 double step2 = (2.0f * (H - R * tanAlpha));
                 double step3 = step1 / step2;
@@ -147,6 +153,7 @@ namespace Assets.Scripts.Objects
             if (collision.collider.tag == "BallReset")
             {
                 transform.SetPositionAndRotation(originalPos, originalRot);
+                _rigidBody.velocity = Vector3.zero;
             }
 
             if (collision.collider.tag == "Hoop")
