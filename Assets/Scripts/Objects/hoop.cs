@@ -9,22 +9,63 @@ namespace Assets.Scripts.Objects
     {
         // Start is called before the first frame update
         public int team = 1;
-        private Ball ball;
+        [SerializeField] private bool hitbottom = false;
+        [SerializeField] private bool hittop = false;
+        [field: SerializeField] public Ball Ball { get; private set; }
+        [SerializeField] private bool canBeValid = false;
+        [SerializeField] private float maxTestTime = 2.5f;
+        [SerializeField] private float curTestTime = 0f;
 
         void Start()
         {
-            ball = FindObjectOfType<Ball>();
+            Ball = FindObjectOfType<Ball>();
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            if (hittop)
+            {
+                curTestTime += Time.deltaTime;
+                if(curTestTime > maxTestTime)
+                {
+                    hittop = false;
+                }
+            }
+            else
+            {
+                curTestTime = 0f;
+            }
         }
 
-        public void OnCollisionEnter(Collision collision)
+        public void SetHitBool(bool isUnder)
         {
-            if (collision.gameObject == ball.gameObject)
+            if (isUnder)
+            {
+                hitbottom = true;
+            }
+            else
+            {
+                hittop = true;
+            }
+            
+            RunScoreCheck();
+        }
+
+        public void RunScoreCheck()
+        {
+            if(hittop && !hitbottom)
+            {
+                canBeValid = true;
+                return;
+            }
+            if(hitbottom && !hittop)
+            {
+                canBeValid=false;
+                return;
+            }
+
+            if(canBeValid && hittop && hitbottom)
             {
                 switch (team)
                 {
@@ -38,8 +79,13 @@ namespace Assets.Scripts.Objects
                         break;
 
                 }
-                
+                canBeValid = false;
+                hitbottom = false;
+                hittop = false;
+
+
             }
+            
         }
     }
 }
