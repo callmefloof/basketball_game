@@ -11,6 +11,7 @@ TagManager:
   - Attacking Side
   - Defending Side
   - Hoop
+  - BallReset
   layers:
   - Default
   - TransparentFX

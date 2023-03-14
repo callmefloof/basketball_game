@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
+using Assets.Scripts.AI.State_Machine.States.Base;
 
-namespace Assets.Scripts.AI.State_Machine.States.Base
+namespace Assets.Scripts.AI.State_Machine.States
 {
     public class Examine : State
     {
