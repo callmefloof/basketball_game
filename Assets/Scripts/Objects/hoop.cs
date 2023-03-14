@@ -1,14 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class hoop : MonoBehaviour
+namespace Assets.Scripts.Objects
 {
-    private void OnTriggerEnter(Collider other)
+    public class Hoop : MonoBehaviour
     {
-        if (other.tag == "Ball")
+        // Start is called before the first frame update
+        public int team = 1;
+        private Ball ball;
+
+        void Start()
         {
-            Debug.Log("score");
+            ball = FindObjectOfType<Ball>();
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
+
+        public void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject == ball.gameObject)
+            {
+                switch (team)
+                {
+                    case 1:
+                        GameManager.Instance.Scores["Team 2"]++;
+                        Debug.Log("Team 1 scored");
+                        break;
+                    case 2:
+                        GameManager.Instance.Scores["Team 1"]++;
+                        Debug.Log("Team 2 scored");
+                        break;
+
+                }
+                
+            }
         }
     }
 }
