@@ -38,7 +38,7 @@ namespace Assets.Scripts.Objects
                         break;
 
                 }
-                
+                GameManager.Instance.SendMessage("UpdateScoreBoard()");
             }
         }
     }
