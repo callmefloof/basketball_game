@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0d2bfb9394ed04429b51b5e0e8407c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Parent>k__BackingField: {fileID: 1942753139736912484}
+  <Parent>k__BackingField: {fileID: 0}
   <isUnder>k__BackingField: 1
 --- !u!1 &1942753139516730271
 GameObject:
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0d2bfb9394ed04429b51b5e0e8407c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Parent>k__BackingField: {fileID: 1942753139736912484}
+  <Parent>k__BackingField: {fileID: 0}
   <isUnder>k__BackingField: 0
 --- !u!1 &1942753139736912486
 GameObject:
@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 1942753139736912485}
   - component: {fileID: 1942753139736912481}
   - component: {fileID: 1942753139736912482}
-  - component: {fileID: 1942753139736912484}
   m_Layer: 0
   m_Name: hoop_hitbox (1)
   m_TagString: Hoop
@@ -206,22 +205,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1942753139736912484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942753139736912486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e15e426b82fa114c9e6b6d560a70f46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  team: 1
-  hitbottom: 0
-  hittop: 0
-  <Ball>k__BackingField: {fileID: 0}
-  canBeValid: 0
-  maxTestTime: 2.5
-  curTestTime: 0

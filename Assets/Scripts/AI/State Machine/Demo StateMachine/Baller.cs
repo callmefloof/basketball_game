@@ -1,3 +1,4 @@
+using System.Collections;
 using Assets.Scripts.AI.Environment;
 using Assets.Scripts.AI.State_Machine.States;
 using Assets.Scripts.Objects;
@@ -21,6 +22,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         public int team = 1;
         public EnvironmentInfoComponent environmentInfoComponent;
         public StateMachine StateMachine { get; private set; }
+       
 
         private void Awake()
         {
@@ -38,9 +40,11 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
                 StateMachine.ChangeState(new Examine(this));
             }
         }
-
+        
         void Update()
         {
+            environmentInfoComponent.UpdateInfo();
+            
             if (StateMachine != null)
             {
                 StateMachine.Update();
@@ -48,8 +52,9 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
  
             step = speed * Time.deltaTime; // calculate distance to move
             navMeshAgent.speed = step;
-            environmentInfoComponent.UpdateInfo();
-            Debug.Log("Team " +team + ": "+ environmentInfoComponent.BallerSuggestion);
+            
+            //Debug.Log("Team " +team + ": "+ environmentInfoComponent.BallerSuggestion);
+            Debug.Log($"Team; {team} member {environmentInfoComponent.Team.FindIndex(x => x == this)} is doing {environmentInfoComponent.BallerSuggestion}");
         }
         
         void OnCollisionEnter(Collision collision)
@@ -61,6 +66,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
                 Debug.Log("Collision detected with player object!");
                 Debug.Log("The ball is held? " + heldBall.ToString());
                 ball.PickUp(this);
+                
             }
 
             if (collision.gameObject.tag == "Attacking Side")
@@ -80,6 +86,8 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
                 ball.PickUp(this);
             }
         }
+
+       
     }
 }
 

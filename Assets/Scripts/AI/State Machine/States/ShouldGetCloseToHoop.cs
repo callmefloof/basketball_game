@@ -4,20 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.AI.State_Machine.States.Base;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
+using UnityEditor.Experimental.GraphView;
 
 namespace Assets.Scripts.AI.State_Machine.States
 {
-    public class defendingState : State 
+    public class ShouldGetCloseToHoop : State 
     {
         private Baller baller;
         private Vector3 newPos;
         private Vector3 pos;
-        private Vector3 defendingZonePosition;
+        private Vector3 teamHoop;
+        private bool isOffensive;
+        
 
-        public defendingState(IStateMachineMember owner) : base(owner)
+        public ShouldGetCloseToHoop(IStateMachineMember owner, bool isOffensive) : base(owner)
         {
             Owner = owner;
-            pos = GameObject.FindWithTag("AI 1").transform.position;
+            this.isOffensive = isOffensive;
+
         }
  
         public override void Enter()
@@ -35,21 +39,36 @@ namespace Assets.Scripts.AI.State_Machine.States
                 return; // Stop moving if shouldMove is false
             }
 
+            string teamOneTarget = String.Empty;
+            string teamTwoTarget = String.Empty;
+
+            if (isOffensive)
+            {
+                teamOneTarget = "HoopTwo";
+                teamTwoTarget = "HoopOne";
+                
+            }
+            else
+            {
+                teamOneTarget = "HoopOne";
+                teamTwoTarget = "HoopTwo";
+            }
+
             switch (baller.team)
             {
                 case 1:
-                    defendingZonePosition = GameObject.FindWithTag("ZoneOne").transform.position;
+                    teamHoop = GameObject.FindWithTag(teamOneTarget).transform.position;
                     break;
                 
                 case 2:
-                    defendingZonePosition = GameObject.FindWithTag("ZoneTwo").transform.position;
+                    teamHoop = GameObject.FindWithTag(teamTwoTarget).transform.position;
                     break;
             }
             
             var step = baller.speed * Time.deltaTime;
             
            
-            baller.navMeshAgent.SetDestination(defendingZonePosition);
+            baller.navMeshAgent.SetDestination(teamHoop);
 
 
             if (baller.heldBall) {

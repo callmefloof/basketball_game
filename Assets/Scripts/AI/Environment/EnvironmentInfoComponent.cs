@@ -12,6 +12,7 @@ using UnityEngine;
 using Assets.Scripts.Objects;
 using Object = UnityEngine.Object;
 
+
 namespace Assets.Scripts.AI.Environment
 {
     public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop}
@@ -113,17 +114,16 @@ namespace Assets.Scripts.AI.Environment
             Owner.navMeshAgent.avoidancePriority = Mathf.FloorToInt(Mathf.Lerp(minAvoidancePriority, maxAvoidanceDistance, Aggression));
             Owner.navMeshAgent.radius = Mathf.FloorToInt(Mathf.Lerp(minAvoidanceDistance, maxAvoidanceDistance, Defensiveness));
         }
-        private bool ShouldPickUpBall((List<float> enemyDistances, List<float> teamDistances) ballerDistances, Vector3 ownerPosition)
+        private bool ShouldPickUpBall()
         {
-            if (Aggression > 0.5f) return true;
-
-            return ballerDistances.teamDistances.All(ballerDistance => Vector3.Distance(ownerPosition, Ball.transform.position) < ballerDistance);
+            return Team.All(x => x.heldBall != true);
+            //for each, for each player check if they(our team mate) arent holding the ball and return the values , if not attack, if then get closer or shoot (other team defend)
         }
         private bool ShouldIntercept((float enemyHoopDistance, float ownerHoopDistance) distancesToHoops, (List<float> enemyDistances, List<float> teamDistances) ballerDistances, Vector3 ownerPosition)
         {
             if (Team.Any(baller => (distancesToHoops.enemyHoopDistance > GetHoopDistances(baller).enemyHoopDistance &&
-                                    Aggression < 0.5f))) return false;
-            return EnemyTeam.Any(baller => (distancesToHoops.ownerHoopDistance < GetHoopDistances(baller).enemyHoopDistance && Defensiveness > 0.5f));
+                                    Aggression < 0.5f && baller != Owner))) return false;
+            return EnemyTeam.Any(baller => (distancesToHoops.ownerHoopDistance < GetHoopDistances(baller).enemyHoopDistance && Defensiveness > 0.5f && baller != Owner));
         }
         public void UpdateInfo()
         {
@@ -140,11 +140,11 @@ namespace Assets.Scripts.AI.Environment
                                                                         10 * (1 + Aggression)
                     ? BallerInfo.ShouldShoot
                     : BallerInfo.ShouldGetCloserToEnemyHoop,
-                true when Team.Any(x=> Ball.ballHeldBy == x) => BallerInfo.ShouldDefend,
+                true when Team.Any(x=> Ball.ballHeldBy == x && Ball.ballHeldBy != Owner ) => BallerInfo.ShouldDefend,
                 true => ShouldIntercept(distancesToHoops, ballerDistances, ownerPosition)
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldGetCloserToTeamHoop,
-                false => ShouldPickUpBall(ballerDistances, ownerPosition)
+                false => ShouldPickUpBall()
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldDefend
             };

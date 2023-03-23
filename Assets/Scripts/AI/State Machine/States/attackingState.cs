@@ -47,7 +47,7 @@ namespace Assets.Scripts.AI.State_Machine.States
                 baller.StateMachine.ChangeState(new Examine(baller));
             }
 
-            Debug.Log(baller.speed);
+            Debug.Log($"Team; {baller.team} member {baller.environmentInfoComponent.Team.FindIndex(x => x == baller)} is going at  {baller.speed}");
         }
 
         public override void Exit()
