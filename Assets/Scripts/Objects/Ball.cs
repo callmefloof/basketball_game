@@ -20,6 +20,9 @@ namespace Assets.Scripts.Objects
         [SerializeField] private bool _drop = false;
         private Vector3 originalPos;
         private Quaternion originalRot;
+        public float CurrentGraceTime = 0f;
+        public float GraceTime = 1.5f;
+        public bool BallHasGraceTime = false;
 
         void Start()
         {
@@ -34,17 +37,30 @@ namespace Assets.Scripts.Objects
         // Update is called once per frame
         void Update()
         {
-            if (!isBeingHeld) return;
-            if (ballHeldBy == null) return;
+            if (BallHasGraceTime)
+            {
+                CurrentGraceTime += Time.deltaTime;
+                if (CurrentGraceTime > GraceTime)
+                {
+                    BallHasGraceTime = false;
+                    CurrentGraceTime = 0f;
+                }
+
+            }
             if (_drop)
             {
                 Drop();
                 _drop = false;
             }
+            
+            
+
         }
 
         public void PickUp(IStateMachineMember baller)
         {
+            if (BallHasGraceTime) return;
+
             Drop();
 
             ballHeldBy = baller as Baller;
@@ -52,6 +68,7 @@ namespace Assets.Scripts.Objects
             _dribbleTransform = ballHeldBy.transform.GetChild(0);
             isBeingHeld = true;
             _rigidBody.isKinematic = true;
+            BallHasGraceTime = true;
 
         }
         public bool test = false;
@@ -104,6 +121,7 @@ namespace Assets.Scripts.Objects
                 Debug.Log(globalVel);
                 yield return new WaitForSeconds(1f);
                 isBeingShot = false;
+                ballHeldBy = null;
                 
             }
             

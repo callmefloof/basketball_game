@@ -17,6 +17,9 @@ TagManager:
   - ZoneOne
   - ZoneTwo
   - ShootingZone
+  - CenterPoint
+  - TeamPanel
+  - MemberPanel
   layers:
   - Default
   - TransparentFX

@@ -24,7 +24,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         public EnvironmentInfoComponent environmentInfoComponent;
         public bool shoot = false;
         public StateMachine StateMachine { get; private set; }
-       
+        public Color ballerColor;
 
         private void Awake()
         {
@@ -34,6 +34,12 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             environmentInfoComponent = new EnvironmentInfoComponent(this);
             ball = FindFirstObjectByType<Ball>();
             shoot = false;
+
+            var meshRenderer = GetComponent<MeshRenderer>();
+            var material = meshRenderer.material;
+            material.SetColor("_BallerTeamColor", team == 1 ? GameManager.Instance.TeamOneColor : GameManager.Instance.TeamTwoColor);
+            meshRenderer.material = material;
+
         }
 
         void Start()
@@ -62,15 +68,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         
         void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.tag == "Ball" && !collision.gameObject.GetComponent<Ball>().isBeingShot)
-            {
-                heldBall = true;
-                shouldMove = false;
-                Debug.Log("Collision detected with player object!");
-                Debug.Log("The ball is held? " + heldBall.ToString());
-                ball.PickUp(this);
-                
-            }
+            BallCheck(collision);
 
             if (collision.gameObject.tag == "Attacking Side")
             {
@@ -97,14 +95,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
 
         void OnCollisionStay(Collision collision)
         {
-            if (collision.gameObject.tag == "Ball" && !collision.gameObject.GetComponent<Ball>().isBeingShot)
-            {
-                heldBall = true;
-                shouldMove = false;
-                Debug.Log("Collision detected with player object!");
-                Debug.Log("The ball is held? " + heldBall.ToString());
-                ball.PickUp(this);
-            }
+            BallCheck(collision);
             if (collision.gameObject.tag == "ShootingZone")
             {
                 Debug.Log("Shooting Collision detected with player object!");
@@ -112,7 +103,23 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             }
         }
 
-       
+       private void BallCheck(Collision collision)
+        {
+            if (collision.gameObject.tag != "Ball") return;
+            Ball b = collision.gameObject.GetComponent<Ball>();
+            if (b == null) return;
+            if (b.isBeingShot) return;
+            if (b.BallHasGraceTime) return;
+            if (b.ballHeldBy == this) return;
+
+            heldBall = true;
+            shouldMove = false;
+            Debug.Log("Collision detected with player object!");
+            Debug.Log("The ball is held? " + heldBall.ToString());
+            ball.PickUp(this);
+
+
+        }
     }
 }
 

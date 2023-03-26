@@ -36,7 +36,7 @@ namespace Assets.Scripts.AI.State_Machine.States
                     break;
                 
                 case BallerInfo.ShouldDefend: 
-                    baller.StateMachine.ChangeState(new defendingState(baller));
+                    baller.StateMachine.ChangeState(new DefendingState(baller));
                     break;
                 //get closer to hoop, then shoot... 
                 case BallerInfo.ShouldGetCloserToTeamHoop: 
@@ -45,6 +45,9 @@ namespace Assets.Scripts.AI.State_Machine.States
                 
                 case BallerInfo.ShouldGetCloserToEnemyHoop: 
                     baller.StateMachine.ChangeState(new ShouldGetCloseToHoop(baller, true));
+                    break;
+                case BallerInfo.AvoidOpponent:
+                    baller.StateMachine.ChangeState(new AvoidOpponent(baller));
                     break;
                 //add pass functions 
             }

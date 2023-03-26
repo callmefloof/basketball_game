@@ -34,10 +34,7 @@ public class ShootingPoint : MonoBehaviour
             baller = other.gameObject.GetComponent<Baller>();
         }
         if (baller == null) return;
-
-        if (baller.heldBall == true)
-        {
-            baller.shoot = true;
-        }
+        bool correctZone = (tag == "ZoneOne" && baller.team == 2) || (tag == "ZoneTwo" && baller.team == 1);
+        baller.shoot = baller.heldBall == true && correctZone;
     }
 }

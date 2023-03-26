@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.AI.Environment
 {
-    public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop}
+    public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop, AvoidOpponent}
     public class EnvironmentInfoComponent
     {
         public Baller Owner { get; private set; }
@@ -119,27 +119,60 @@ namespace Assets.Scripts.AI.Environment
             return Team.All(x => x.heldBall != true);
             //for each, for each player check if they(our team mate) arent holding the ball and return the values , if not attack, if then get closer or shoot (other team defend)
         }
-        private bool ShouldIntercept((float enemyHoopDistance, float ownerHoopDistance) distancesToHoops, (List<float> enemyDistances, List<float> teamDistances) ballerDistances, Vector3 ownerPosition)
+        private bool ShouldIntercept(Vector3 ownerPosition)
         {
-            if (Team.Any(baller => (distancesToHoops.enemyHoopDistance > GetHoopDistances(baller).enemyHoopDistance &&
-                                    Aggression < 0.5f && baller != Owner))) return false;
-            return EnemyTeam.Any(baller => (distancesToHoops.ownerHoopDistance < GetHoopDistances(baller).enemyHoopDistance && Defensiveness > 0.5f && baller != Owner));
+            foreach (var opponent in EnemyTeam)
+            {
+                //continue if the opponent isn't holding the ball.
+                if (!opponent.heldBall) continue;
+                foreach(var teamMember in Team)
+                {
+                    // if the team member is ourselves, continue.
+                    if (teamMember == Owner) continue;
+
+                    //get the difference back as: distance owner to opponent / distance other team member to opponent
+                    float distanceDifference = Vector3.Distance(opponent.transform.position, ownerPosition) / Vector3.Distance(teamMember.transform.position, ownerPosition);
+
+                    // example: if the distances of both is 5, the result is 1
+                    // when our owner's agression is 1, it will pursue the ball, if not, it will get closer to the team hoop
+                    return distanceDifference > Aggression;
+                } 
+            }
+
+            //fallback option
+            return true;
+        }
+
+        private bool ShouldShoot()
+        {
+            //We need to get near the opponent's side first
+            if (!Owner.shoot) return false;
+            else
+            {
+                Vector3 enemyHoopPosXZ = new Vector3(EnemyHoop.transform.position.x, Owner.transform.position.y, EnemyHoop.transform.position.z);
+                var centerPoint = GameObject.FindGameObjectWithTag("CenterPoint");
+                Vector3 centerPointPosXZ = new Vector3(centerPoint.transform.position.x, Owner.transform.position.y, centerPoint.transform.position.z);
+                float distanceFromCentreToHoop = Vector3.Distance(centerPointPosXZ, enemyHoopPosXZ);
+                float distanceFromPlayerToHoop = Vector3.Distance(Owner.transform.position, enemyHoopPosXZ);
+                
+                float chance = (1f-(distanceFromPlayerToHoop / distanceFromCentreToHoop) +(Aggression-Defensiveness));
+
+                return chance > UnityEngine.Random.Range(0f, 1f);
+            }
+            //
         }
         public void UpdateInfo()
         {
             SetAvoidance();
-
-            var distancesToHoops = GetHoopDistances();
-            var ballerDistances = GetDistances();
             var ownerPosition = Owner.transform.position;
             BallerSuggestion = Ball.isBeingHeld switch
             {
                 // TODO: determine what part of the field the baller is on.
                 // check to see if we're holding the ball
-                true when Ball.ballHeldBy == Owner && Owner.heldBall => BallerInfo.ShouldShoot,
+                true when Ball.ballHeldBy == Owner && Owner.heldBall => ShouldShoot() ? BallerInfo.ShouldShoot : BallerInfo.AvoidOpponent,
                     
                 true when Team.Any(x=> Ball.ballHeldBy == x && Ball.ballHeldBy != Owner ) => BallerInfo.ShouldDefend,
-                true => ShouldIntercept(distancesToHoops, ballerDistances, ownerPosition)
+                true => ShouldIntercept(ownerPosition)
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldGetCloserToTeamHoop,
                 false => ShouldPickUpBall()

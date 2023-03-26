@@ -32,32 +32,39 @@ namespace Assets.Scripts.AI.State_Machine.States
 
         public override void Execute()
         {
-            
-            
-            
 
-            if (baller.shoot)
-            {
-                var targetHoop = baller.environmentInfoComponent.EnemyHoop.transform.position;
-                //Level Y to the baller so we don't tilt
-                var targetHoopXZ = new Vector3(targetHoop.x, baller.transform.position.y, targetHoop.z);
-                baller.navMeshAgent.updateRotation = false;
-                baller.navMeshAgent.updatePosition = false;
-                baller.transform.LookAt(targetHoopXZ);
-                Debug.Log(baller.shoot);
-                ballObject.StartCoroutine(ballObject.ShootBall());
-                baller.navMeshAgent.updateRotation = true;
-                baller.navMeshAgent.updatePosition = true;
-                baller.shoot = false;
-            }
-            else
-            {
-                baller.navMeshAgent.destination = shootposition;
-            }
-            
-            
+            //old version
+            //if (baller.shoot)
+            //{
+            //    var targetHoop = baller.environmentInfoComponent.EnemyHoop.transform.position;
+            //    //Level Y to the baller so we don't tilt
+            //    var targetHoopXZ = new Vector3(targetHoop.x, baller.transform.position.y, targetHoop.z);
+            //    baller.navMeshAgent.updateRotation = false;
+            //    baller.navMeshAgent.updatePosition = false;
+            //    baller.transform.LookAt(targetHoopXZ);
+            //    Debug.Log(baller.shoot);
+            //    ballObject.StartCoroutine(ballObject.ShootBall());
+            //    baller.navMeshAgent.updateRotation = true;
+            //    baller.navMeshAgent.updatePosition = true;
+            //    baller.shoot = false;
+            //}
+            //else
+            //{
+            //    baller.navMeshAgent.destination = shootposition;
+            //}
 
-            
+            var targetHoop = baller.environmentInfoComponent.EnemyHoop.transform.position;
+            //Level Y to the baller so we don't tilt
+            var targetHoopXZ = new Vector3(targetHoop.x, baller.transform.position.y, targetHoop.z);
+            baller.navMeshAgent.updateRotation = false;
+            baller.navMeshAgent.updatePosition = false;
+            baller.transform.LookAt(targetHoopXZ);
+            Debug.Log(baller.shoot);
+            ballObject.StartCoroutine(ballObject.ShootBall());
+            baller.navMeshAgent.updateRotation = true;
+            baller.navMeshAgent.updatePosition = true;
+
+
             baller.StateMachine.ChangeState(new Examine(baller));
         }
 
