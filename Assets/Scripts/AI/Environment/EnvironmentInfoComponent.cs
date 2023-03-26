@@ -136,10 +136,8 @@ namespace Assets.Scripts.AI.Environment
             {
                 // TODO: determine what part of the field the baller is on.
                 // check to see if we're holding the ball
-                true when Ball.ballHeldBy == Owner && Owner.heldBall => distancesToHoops.enemyHoopDistance <
-                                                                        10 * (1 + Aggression)
-                    ? BallerInfo.ShouldShoot
-                    : BallerInfo.ShouldGetCloserToEnemyHoop,
+                true when Ball.ballHeldBy == Owner && Owner.heldBall => BallerInfo.ShouldShoot,
+                    
                 true when Team.Any(x=> Ball.ballHeldBy == x && Ball.ballHeldBy != Owner ) => BallerInfo.ShouldDefend,
                 true => ShouldIntercept(distancesToHoops, ballerDistances, ownerPosition)
                     ? BallerInfo.ShouldAttack
