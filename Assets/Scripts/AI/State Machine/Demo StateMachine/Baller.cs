@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Assets.Scripts.AI.Environment;
 using Assets.Scripts.AI.State_Machine.States;
@@ -21,6 +22,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         public NavMeshObstacle navMeshObstacle;
         public int team = 1;
         public EnvironmentInfoComponent environmentInfoComponent;
+        public bool shoot = false;
         public StateMachine StateMachine { get; private set; }
        
 
@@ -31,6 +33,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             StateMachine = new StateMachine();
             environmentInfoComponent = new EnvironmentInfoComponent(this);
             ball = FindFirstObjectByType<Ball>();
+            shoot = false;
         }
 
         void Start()
@@ -73,7 +76,24 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             {
                 attackingSide = true; 
             }
+            
+            if (collision.gameObject.tag == "ShootingZone")
+            {
+                Debug.Log("Shooting Collision detected with player object!");
+                shoot = true; 
+            }   
         }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            if (collision.gameObject.tag == "ShootingZone")
+            {
+                Debug.Log("Shooting Collision detected with player object!");
+                shoot = false; 
+            }   
+        }
+
+        
 
         void OnCollisionStay(Collision collision)
         {

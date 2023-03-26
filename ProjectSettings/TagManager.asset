@@ -16,6 +16,7 @@ TagManager:
   - HoopTwo
   - ZoneOne
   - ZoneTwo
+  - ShootingZone
   layers:
   - Default
   - TransparentFX

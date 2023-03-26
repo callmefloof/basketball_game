@@ -13,6 +13,7 @@ namespace Assets.Scripts.AI.State_Machine.States
         private Baller baller;
         private Vector3 hoopPosition;
         private Ball ballObject;
+     
 
         
         public ShootingState(IStateMachineMember owner): base(owner)
@@ -23,6 +24,8 @@ namespace Assets.Scripts.AI.State_Machine.States
         public override void Enter()
         {
             ballObject = GameObject.Find("Ball").GetComponent<Ball>();
+            baller.shoot = false;
+          
             
             Debug.Log("Switched to ShootingState");
         }
@@ -30,7 +33,7 @@ namespace Assets.Scripts.AI.State_Machine.States
         public override void Execute()
         {
             
-           
+            baller.shoot = false;
             var targetHoop = baller.environmentInfoComponent.EnemyHoop.transform.position;
             //Level Y to the baller so we don't tilt
             var targetHoopXZ = new Vector3(targetHoop.x, baller.transform.position.y, targetHoop.z);
@@ -38,13 +41,22 @@ namespace Assets.Scripts.AI.State_Machine.States
             baller.navMeshAgent.updatePosition = false;
             baller.transform.LookAt(targetHoopXZ);
 
-            ballObject.StartCoroutine(ballObject.ShootBall());
+            if (baller.shoot = true)
+            {
+                Debug.Log(baller.shoot);
+                ballObject.StartCoroutine(ballObject.ShootBall());
+                baller.navMeshAgent.updateRotation = true;
+                baller.navMeshAgent.updatePosition = true;
+                baller.shoot = false;
+            }
+            
+            
 
-            baller.navMeshAgent.updateRotation = true;
-            baller.navMeshAgent.updatePosition = true;
+            
             baller.StateMachine.ChangeState(new Examine(baller));
         }
 
+        
         public override void Exit()
         {
             

@@ -44,7 +44,6 @@ namespace Assets.Scripts.AI.State_Machine.States
 
             if (baller.heldBall) {
                 baller.speed = 0f; // stop moving if ball is held
-                
             }
 
             Debug.Log($"Team; {baller.team} member {baller.environmentInfoComponent.Team.FindIndex(x => x == baller)} is going at  {baller.speed}");
