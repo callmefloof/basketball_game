@@ -105,6 +105,11 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
                 Debug.Log("The ball is held? " + heldBall.ToString());
                 ball.PickUp(this);
             }
+            if (collision.gameObject.tag == "ShootingZone")
+            {
+                Debug.Log("Shooting Collision detected with player object!");
+                shoot = true;
+            }
         }
 
        
