@@ -70,13 +70,8 @@ namespace Assets.Scripts.AI.State_Machine.States
            
             baller.navMeshAgent.SetDestination(teamHoop);
 
-
-            if (baller.heldBall) {
-                baller.speed = 0f; // stop moving if ball is held
-                baller.StateMachine.ChangeState(new Examine(baller));
-            }
-
             Debug.Log($"Team; {baller.team} member {baller.environmentInfoComponent.Team.FindIndex(x => x == baller)} is going at  {baller.speed}");
+            baller.StateMachine.ChangeState(new Examine(baller));
         }
 
         public override void Exit()

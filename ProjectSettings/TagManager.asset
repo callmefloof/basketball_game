@@ -12,6 +12,10 @@ TagManager:
   - Defending Side
   - Hoop
   - BallReset
+  - HoopOne
+  - HoopTwo
+  - ZoneOne
+  - ZoneTwo
   layers:
   - Default
   - TransparentFX
