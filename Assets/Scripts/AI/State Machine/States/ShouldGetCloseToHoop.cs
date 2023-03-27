@@ -5,6 +5,8 @@ using UnityEngine;
 using Assets.Scripts.AI.State_Machine.States.Base;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using UnityEditor.Experimental.GraphView;
+using JetBrains.Annotations;
+using System.Linq;
 
 namespace Assets.Scripts.AI.State_Machine.States
 {
@@ -13,7 +15,7 @@ namespace Assets.Scripts.AI.State_Machine.States
         private Baller baller;
         private Vector3 newPos;
         private Vector3 pos;
-        private Vector3 teamHoop;
+        private Vector3 hoopPosition;
         private bool isOffensive;
         
 
@@ -57,18 +59,25 @@ namespace Assets.Scripts.AI.State_Machine.States
             switch (baller.team)
             {
                 case 1:
-                    teamHoop = GameObject.FindWithTag(teamOneTarget).transform.position;
+                    hoopPosition = GameObject.FindWithTag(teamOneTarget).transform.position;
                     break;
                 
                 case 2:
-                    teamHoop = GameObject.FindWithTag(teamTwoTarget).transform.position;
+                    hoopPosition = GameObject.FindWithTag(teamTwoTarget).transform.position;
                     break;
             }
             
             var step = baller.speed * Time.deltaTime;
-            
-           
-            baller.navMeshAgent.SetDestination(teamHoop);
+            List<Vector3> enemyPositions = new List<Vector3>();
+
+            baller.environmentInfoComponent.EnemyTeam.ForEach(x => enemyPositions.Add(x.transform.position));
+            Vector3 averagedEnemyPosition = new Vector3(enemyPositions.Sum(x => x.x), enemyPositions.Sum(x => x.y), enemyPositions.Sum(x => x.z));
+            Vector3 newPosition = Vector3.Lerp(hoopPosition, averagedEnemyPosition, baller.Defensiveness);
+            Debug.DrawLine(newPosition, new Vector3(newPosition.x, 10000, newPosition.z));
+
+
+
+            baller.navMeshAgent.SetDestination(newPosition);
 
             Debug.Log($"Team; {baller.team} member {baller.environmentInfoComponent.Team.FindIndex(x => x == baller)} is going at  {baller.speed}");
             baller.StateMachine.ChangeState(new Examine(baller));

@@ -32,7 +32,7 @@ namespace Assets.Scripts.AI.State_Machine.States
                     break; 
                 
                 case BallerInfo.ShouldShoot: 
-                    baller.StateMachine.ChangeState(new ShootingState(baller));
+                    baller.StateMachine.ChangeState(new ShootingState(baller, baller.environmentInfoComponent.EnemyHoop.transform.position));
                     break;
                 
                 case BallerInfo.ShouldDefend: 
@@ -48,6 +48,9 @@ namespace Assets.Scripts.AI.State_Machine.States
                     break;
                 case BallerInfo.AvoidOpponent:
                     baller.StateMachine.ChangeState(new AvoidOpponent(baller));
+                    break;
+                case BallerInfo.PassBall:
+                    baller.StateMachine.ChangeState(new Pass(baller));
                     break;
                 //add pass functions 
             }

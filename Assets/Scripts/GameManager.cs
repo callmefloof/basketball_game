@@ -34,7 +34,14 @@ namespace Assets.Scripts
         }
         void Start()
         {
-
+            var teamOneHoopMesh = GameObject.FindGameObjectWithTag("HoopOne").GetComponent<MeshRenderer>();
+            var teamTwoHoopMesh = GameObject.FindGameObjectWithTag("HoopTwo").GetComponent<MeshRenderer>();
+            var materialTeamOne = teamOneHoopMesh.material;
+            materialTeamOne.SetColor("_BallerTeamColor",GameManager.Instance.TeamOneColor);
+            teamOneHoopMesh.material = materialTeamOne;
+            var materialTeamTwo = teamTwoHoopMesh.material;
+            materialTeamTwo.SetColor("_BallerTeamColor", GameManager.Instance.TeamTwoColor);
+            teamTwoHoopMesh.material = materialTeamTwo;
         }
 
         // Update is called once per frame

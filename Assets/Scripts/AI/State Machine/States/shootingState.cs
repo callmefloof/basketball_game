@@ -14,11 +14,12 @@ namespace Assets.Scripts.AI.State_Machine.States
         private Vector3 hoopPosition;
         private Ball ballObject;
         private Vector3 shootposition;
-
+        private Vector3 target;
         
-        public ShootingState(IStateMachineMember owner): base(owner)
+        public ShootingState(IStateMachineMember owner, Vector3 target): base(owner)
         {
             baller = owner as Baller;
+            this.target = target;
         }
 
         public override void Enter()
@@ -60,7 +61,7 @@ namespace Assets.Scripts.AI.State_Machine.States
             baller.navMeshAgent.updatePosition = false;
             baller.transform.LookAt(targetHoopXZ);
             Debug.Log(baller.shoot);
-            ballObject.StartCoroutine(ballObject.ShootBall());
+            ballObject.StartCoroutine(ballObject.ShootBall(target));
             baller.navMeshAgent.updateRotation = true;
             baller.navMeshAgent.updatePosition = true;
 

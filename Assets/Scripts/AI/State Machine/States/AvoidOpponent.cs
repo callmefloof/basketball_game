@@ -24,19 +24,19 @@ namespace Assets.Scripts.AI.State_Machine.States
 
         public override void Execute()
         {
-            if(baller.environmentInfoComponent.EnemyTeam.Any(x=> Vector3.Distance(baller.transform.position, x.transform.position) < 10f * baller.environmentInfoComponent.Defensiveness))
+            if(baller.environmentInfoComponent.EnemyTeam.Any(x=> Vector3.Distance(baller.transform.position, x.transform.position) < 10f * baller.Defensiveness))
             {
                 Vector3 newPosition = baller.transform.position;
                 float rng = UnityEngine.Random.Range(0f, 1f);
                 if(rng > 0.0f && rng < 0.33f)
                 {
-                    newPosition = newPosition + baller.environmentInfoComponent.EnemyTeam.Find(x => Vector3.Distance(baller.transform.position, x.transform.position) < 10f * baller.environmentInfoComponent.Defensiveness).transform.right
-                    * 10f * baller.environmentInfoComponent.Defensiveness;
+                    newPosition = newPosition + baller.environmentInfoComponent.EnemyTeam.Find(x => Vector3.Distance(baller.transform.position, x.transform.position) < 10f * baller.Defensiveness).transform.right
+                    * 10f * baller.Defensiveness;
                 }
                 else if ( rng > 0.33f && rng < 0.66f)
                 {
-                    newPosition = newPosition + -baller.environmentInfoComponent.EnemyTeam.Find(x => Vector3.Distance(baller.transform.position, x.transform.position) < 10f * baller.environmentInfoComponent.Defensiveness).transform.right
-                    * 10f * baller.environmentInfoComponent.Defensiveness;
+                    newPosition = newPosition + -baller.environmentInfoComponent.EnemyTeam.Find(x => Vector3.Distance(baller.transform.position, x.transform.position) < 10f * baller.Defensiveness).transform.right
+                    * 10f * baller.Defensiveness;
                 }
                 else
                 {

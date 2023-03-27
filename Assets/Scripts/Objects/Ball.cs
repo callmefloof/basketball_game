@@ -61,11 +61,11 @@ namespace Assets.Scripts.Objects
         {
             if (BallHasGraceTime) return;
 
-            Drop();
+            // Drop();
 
             ballHeldBy = baller as Baller;
             if (ballHeldBy == null) return;
-            _dribbleTransform = ballHeldBy.transform.GetChild(0);
+            _dribbleTransform = ballHeldBy.transform.GetChild(0).GetChild(0);
             isBeingHeld = true;
             _rigidBody.isKinematic = true;
             BallHasGraceTime = true;
@@ -73,7 +73,8 @@ namespace Assets.Scripts.Objects
         }
         public bool test = false;
         public bool isBeingShot = false;
-        public IEnumerator ShootBall()
+        public bool isBeingDropped = false;
+        public IEnumerator ShootBall(Vector3 target)
         {
             //float gravity = Physics.gravity.magnitude;
             //float radianAngle = angle * Mathf.Deg2Rad;
@@ -92,11 +93,11 @@ namespace Assets.Scripts.Objects
                 
                 isBeingShot = true;
                 Vector3 ballXZPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-                var enemyHoopPos = ballHeldBy.environmentInfoComponent.EnemyHoop.transform.position;
-                Vector3 targetXZPos = new Vector3(enemyHoopPos.x, transform.position.y, enemyHoopPos.z);
+                //var enemyHoopPos = ballHeldBy.environmentInfoComponent.EnemyHoop.transform.position;
+                Vector3 targetXZPos = new Vector3(target.x, transform.position.y, target.z);
                 transform.LookAt(targetXZPos);
                 float R = Vector3.Distance(ballXZPos, targetXZPos);
-                float H = (enemyHoopPos.y) - transform.position.y;
+                float H = (target.y) - transform.position.y;
                 //float anglePlayerHoop = Mathf.Atan2((enemyHoopPos.y + 10f - transform.position.y), (enemyHoopPos.x+2f - transform.position.x)) * Mathf.Rad2Deg;
 
                 float angle = Mathf.Atan(H / R + Mathf.Sqrt((H*H)/(R*R) +1)) * Mathf.Rad2Deg;
@@ -142,11 +143,12 @@ namespace Assets.Scripts.Objects
 
         public void Drop()
         {
-            //ballHeldBy = null;
+            
             isBeingHeld = false;
             if (ballHeldBy != null) ballHeldBy.heldBall = false;
             _rigidBody.isKinematic = false;
             //_dribbleTransform = null;
+            ballHeldBy = null;
             return;
         }
 

@@ -11,11 +11,12 @@ using UnityEditor;
 using UnityEngine;
 using Assets.Scripts.Objects;
 using Object = UnityEngine.Object;
-
+using UnityEngine.Internal;
 
 namespace Assets.Scripts.AI.Environment
 {
-    public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop, AvoidOpponent}
+    public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop, AvoidOpponent, PassBall}
+    
     public class EnvironmentInfoComponent
     {
         public Baller Owner { get; private set; }
@@ -24,19 +25,7 @@ namespace Assets.Scripts.AI.Environment
         public Hoop OurHoop { get; private set; }
         public Hoop EnemyHoop { get; private set; }
         public Ball Ball { get; private set; }
-        private float _aggression = 0.5f;
-        public float Aggression
-        {
-            get => _aggression;
-            set => _aggression = value > 1 ? 1 : value < 0 ? 0 : value;
-        }
-
-        private float _defensiveness = 0.5f;
-        public float Defensiveness
-        {
-            get => _defensiveness;
-            set => _defensiveness = value > 1 ? 1 : value < 0 ? 0 : value;
-        }
+        
 
         public readonly float maxAvoidanceDistance = 5f;
         public readonly float minAvoidanceDistance = 0.5f;
@@ -51,6 +40,8 @@ namespace Assets.Scripts.AI.Environment
         public BallerInfo BallerSuggestion { get; private set; }
         public EnvironmentInfoComponent(Baller owner)
         {
+
+
             Owner = owner;
             var teamresults = GetTeams();
             EnemyTeam.AddRange(teamresults.enemyBallers);
@@ -58,7 +49,7 @@ namespace Assets.Scripts.AI.Environment
             Ball = Object.FindFirstObjectByType<Ball>();
             EnemyHoop = Object.FindObjectsOfType<Hoop>().First(x => x.team != Owner.team);
             OurHoop = Object.FindObjectsOfType<Hoop>().First(x => x.team == Owner.team);
-
+            SetAvoidance();
         }
         private (List<Baller> enemyBallers, List<Baller> teamBallers) GetTeams()
         {
@@ -111,8 +102,12 @@ namespace Assets.Scripts.AI.Environment
         }
         private void SetAvoidance()
         {
-            Owner.navMeshAgent.avoidancePriority = Mathf.FloorToInt(Mathf.Lerp(minAvoidancePriority, maxAvoidanceDistance, Aggression));
-            Owner.navMeshAgent.radius = Mathf.FloorToInt(Mathf.Lerp(minAvoidanceDistance, maxAvoidanceDistance, Defensiveness));
+            //Owner.navMeshAgent.avoidancePriority = Mathf.FloorToInt(Mathf.Lerp(minAvoidancePriority, maxAvoidanceDistance, Owner.Aggression));
+            Owner.navMeshAgent.radius = Mathf.FloorToInt(Mathf.Lerp(minAvoidanceDistance, maxAvoidanceDistance, Owner.Defensiveness));
+            //This was changed due to obstacle avoidance component is removed (it produced some unexpected behavior)
+            //Turns out that only avoidancepriority is needed to make NavMeshAgents avoid one another.
+            Owner.navMeshAgent.avoidancePriority = 10;
+            
         }
         private bool ShouldPickUpBall()
         {
@@ -135,7 +130,7 @@ namespace Assets.Scripts.AI.Environment
 
                     // example: if the distances of both is 5, the result is 1
                     // when our owner's agression is 1, it will pursue the ball, if not, it will get closer to the team hoop
-                    return distanceDifference > Aggression;
+                    return distanceDifference > Owner.Aggression;
                 } 
             }
 
@@ -155,26 +150,90 @@ namespace Assets.Scripts.AI.Environment
                 float distanceFromCentreToHoop = Vector3.Distance(centerPointPosXZ, enemyHoopPosXZ);
                 float distanceFromPlayerToHoop = Vector3.Distance(Owner.transform.position, enemyHoopPosXZ);
                 
-                float chance = (1f-(distanceFromPlayerToHoop / distanceFromCentreToHoop) +(Aggression-Defensiveness));
+                float chance = (1f-(distanceFromPlayerToHoop / distanceFromCentreToHoop) +(Owner.Aggression - Owner.Defensiveness));
 
                 return chance > UnityEngine.Random.Range(0f, 1f);
             }
             //
         }
+        private Baller GetClosestEnemy()
+        {
+            Baller bMin = null;
+            float minDist = Mathf.Infinity;
+            Vector3 currentPos = Owner.transform.position;
+            foreach (Baller b in EnemyTeam)
+            {
+                float dist = Vector3.Distance(b.transform.position, currentPos);
+                if (dist < minDist)
+                {
+                    bMin = b;
+                    minDist = dist;
+                }
+            }
+            return bMin;
+        }
+
+        private Baller GetFurthestPlayer(Vector3 from)
+        {
+            Baller bMax = null;
+            float maxDist = 0f;
+
+            foreach (Baller b in Team)
+            {
+                float dist = Vector3.Distance(b.transform.position, from);
+                if (dist > maxDist)
+                {
+                    bMax = b;
+                    maxDist = dist;
+                }
+            }
+            return bMax;
+        }
+
+        private bool ShouldPass()
+        {
+            float rng = UnityEngine.Random.Range(0.0f, 1.0f);
+            float minDistanceEnemy = 1f;
+            float maxDistanceEnemy = 5f;
+            float defensivenessFactor = 1.2f;
+            float agressionFactor = 0.8f;
+
+            var nearestEnemy = GetClosestEnemy();
+            
+            if(nearestEnemy == null) return false;
+            
+            float distance = Vector3.Distance(Owner.transform.position, nearestEnemy.transform.position);
+            
+            float distanceClamped = Mathf.Clamp(distance, minDistanceEnemy, maxDistanceEnemy);
+            
+            
+            //1 if distance is 1, 0 if distance is 10
+            float distanceFactor = Mathf.Abs(1f-(distanceClamped - minDistanceEnemy/ (maxDistanceEnemy - minDistanceEnemy)));
+            
+            
+            float chance = distanceFactor * (Owner.Defensiveness*defensivenessFactor - Owner.Aggression*agressionFactor);
+
+            //if we are too close to another player, don't bother trying to pass
+            if(Vector3.Distance(Owner.transform.position, GetFurthestPlayer(Owner.transform.position).transform.position) < maxDistanceEnemy) return false;
+
+            return chance > rng;
+
+
+        }
         public void UpdateInfo()
         {
-            SetAvoidance();
+            
             var ownerPosition = Owner.transform.position;
             BallerSuggestion = Ball.isBeingHeld switch
             {
                 // TODO: determine what part of the field the baller is on.
                 // check to see if we're holding the ball
-                true when Ball.ballHeldBy == Owner && Owner.heldBall => ShouldShoot() ? BallerInfo.ShouldShoot : BallerInfo.AvoidOpponent,
+                true when Ball.ballHeldBy == Owner && Owner.heldBall => ShouldShoot() ? BallerInfo.ShouldShoot : ShouldPass() ? BallerInfo.PassBall: BallerInfo.AvoidOpponent,
                     
-                true when Team.Any(x=> Ball.ballHeldBy == x && Ball.ballHeldBy != Owner ) => BallerInfo.ShouldDefend,
+                true when Team.Any(x=> Ball.ballHeldBy == x && Ball.ballHeldBy != Owner ) => BallerInfo.ShouldGetCloserToEnemyHoop,
                 true => ShouldIntercept(ownerPosition)
                     ? BallerInfo.ShouldAttack
-                    : BallerInfo.ShouldGetCloserToTeamHoop,
+                    : BallerInfo.ShouldDefend,
                 false => ShouldPickUpBall()
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldDefend
