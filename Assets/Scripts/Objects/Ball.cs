@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using Assets.Scripts.AI.State_Machine;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Assets.Scripts.Objects
         [SerializeField] private Rigidbody _rigidBody;
         [SerializeField] private Transform _dribbleTransform;
         [SerializeField] private Vector3 _floorPosition;
-        [SerializeField] private bool _isHittingFloor = false;
+        [field: SerializeField] public bool IsHittingFloor { get; private set; } = false;
         [SerializeField] private float _dribbleTime = 5f;
         private SphereCollider _sphereCollider;
         [SerializeField] private float _dribbleAmplitude = 0.8f;
@@ -23,6 +24,10 @@ namespace Assets.Scripts.Objects
         public float CurrentGraceTime = 0f;
         public float GraceTime = 1.5f;
         public bool BallHasGraceTime = false;
+        private float ballStuckTime = 10f;
+        private float currentStuckTime = 0f;
+
+        [field: SerializeField] public Baller BallShotBy { get; private set; }
 
         void Start()
         {
@@ -37,6 +42,14 @@ namespace Assets.Scripts.Objects
         // Update is called once per frame
         void Update()
         {
+            //if the ball is stuck for longer than 10 seconds, reset the timer and ball
+            if(currentStuckTime > ballStuckTime)
+            {
+                transform.position = originalPos;
+                _rigidBody.velocity = Vector3.zero;
+                currentStuckTime = 0f;
+            }
+            // the ball's grace time, prevents players from regrabbing the ball for Gracetime seconds
             if (BallHasGraceTime)
             {
                 CurrentGraceTime += Time.deltaTime;
@@ -47,6 +60,7 @@ namespace Assets.Scripts.Objects
                 }
 
             }
+            //Drop test
             if (_drop)
             {
                 Drop();
@@ -71,6 +85,7 @@ namespace Assets.Scripts.Objects
             BallHasGraceTime = true;
 
         }
+        //serves no purpose, I just don't want to remove the if statement
         public bool test = false;
         public bool isBeingShot = false;
         public bool isBeingDropped = false;
@@ -87,9 +102,10 @@ namespace Assets.Scripts.Objects
             
             if (!test)
             {
-                
-                
+
+                BallShotBy = ballHeldBy;
                 Drop();
+                transform.position = _dribbleTransform.position;
                 
                 isBeingShot = true;
                 Vector3 ballXZPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
@@ -181,21 +197,32 @@ namespace Assets.Scripts.Objects
                 _rigidBody.isKinematic = false;
             }
 
-            if (collision.collider.tag != "floor") return;
+            if (collision.collider.tag != "Floor") return;
             if (isBeingHeld && ballHeldBy != null)
             {
-                _isHittingFloor = true;
+                IsHittingFloor = true;
+                
             }
 
 
         }
 
+        private void OnCollisionStay(Collision collision)
+        {
+            //Test to see if the ball is stuck
+            string[] stuckTags = { "HoopOne", "HoopTwo" };
+            if(stuckTags.Any(x=> x == collision.collider.tag))
+            {
+                currentStuckTime += Time.deltaTime;
+            }
+        }
+
         void OnCollisionExit(Collision other)
         {
-            if (other.collider.tag != "floor") return;
+            if (other.collider.tag != "Floor") return;
             if (isBeingHeld && ballHeldBy != null)
             {
-                _isHittingFloor = false;
+                IsHittingFloor = false;
             }
         }
     }

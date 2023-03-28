@@ -60,9 +60,12 @@ MonoBehaviour:
   navMeshObstacle: {fileID: 0}
   team: 1
   shoot: 0
+  receivingPass: 0
+  receivedPassDestination: {x: 0, y: 0, z: 0}
   ballerColor: {r: 0, g: 0, b: 0, a: 0}
   _aggression: 0.5
   _defensiveness: 0.5
+  JumpVelocity: 2
 --- !u!195 &1571518956474442748
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -277,7 +280,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 122
   m_CollisionDetection: 1
 --- !u!114 &1304246933132455651
 MonoBehaviour:

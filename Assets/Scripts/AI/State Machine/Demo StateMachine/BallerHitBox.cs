@@ -1,4 +1,5 @@
 using Assets.Scripts.Objects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
     {
         // Start is called before the first frame update
         private Baller parent;
+
+        public bool OnGround { get; private set; } = true;
         void Start()
         {
             parent = transform.parent.GetComponent<Baller>();
@@ -24,6 +27,11 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         void OnCollisionEnter(Collision collision)
         {
             BallCheck(collision);
+
+            if(collision.gameObject.tag == "Floor")
+            {
+                OnGround = true;
+            }
 
             if (collision.gameObject.tag == "Attacking Side")
             {
@@ -44,6 +52,11 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
                 Debug.Log("Shooting Collision detected with player object!");
                 parent.shoot = false;
             }
+
+            if (collision.gameObject.tag == "Floor")
+            {
+                OnGround = false;
+            }
         }
 
 
@@ -55,6 +68,11 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             {
                 Debug.Log("Shooting Collision detected with player object!");
                 parent.shoot = true;
+            }
+
+            if (collision.gameObject.tag == "Floor")
+            {
+                OnGround = true;
             }
         }
 

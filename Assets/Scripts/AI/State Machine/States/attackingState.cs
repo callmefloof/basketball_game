@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using UnityEngine;
 using Assets.Scripts.AI.State_Machine.States.Base;
+using Assets.Scripts.Objects;
 
 namespace Assets.Scripts.AI.State_Machine.States
 {
@@ -36,7 +37,7 @@ namespace Assets.Scripts.AI.State_Machine.States
         
             
             var step = baller.speed * Time.deltaTime;
-            basketballPosition = GameObject.FindWithTag("Ball").transform.position;
+            basketballPosition = new Vector3(baller.environmentInfoComponent.Ball.transform.position.x, baller.transform.position.y, baller.environmentInfoComponent.Ball.transform.position.z);
             pos = GameObject.FindWithTag("AI 1").transform.position;
             // baller.transform.position = Vector3.MoveTowards(pos, basketballPosition, step);
             baller.navMeshAgent.SetDestination(basketballPosition);

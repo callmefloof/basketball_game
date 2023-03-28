@@ -23,6 +23,9 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         public int team = 1;
         public EnvironmentInfoComponent environmentInfoComponent;
         public bool shoot = false;
+        public bool receivingPass = false;
+        public Vector3 receivedPassDestination = Vector3.zero;
+        public ReflexBehavior ReflexBehavior { get; private set; }
         public StateMachine StateMachine { get; private set; }
         private MeshRenderer ballHeldMarker;
         public Color ballerColor;
@@ -40,7 +43,7 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             set => _defensiveness = value > 1 ? 1 : value < 0 ? 0 : value;
         }
 
-
+        public float JumpVelocity = 2f;
 
         private void Awake()
         {
@@ -55,10 +58,13 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             ball = FindFirstObjectByType<Ball>();
             shoot = false;
 
+            
             var meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
             var material = meshRenderer.material;
             material.SetColor("_BallerTeamColor", team == 1 ? GameManager.Instance.TeamOneColor : GameManager.Instance.TeamTwoColor);
             meshRenderer.material = material;
+            ReflexBehavior = new ReflexBehavior(JumpVelocity, this);
+            
 
         }
 
@@ -74,12 +80,11 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
         {
             ballHeldMarker.enabled = heldBall;
 
+            receivingPass = receivingPass && (!ball.IsHittingFloor && (!ball.ballHeldBy == this && ball.ballHeldBy == null)) ? receivingPass : false;
+
             environmentInfoComponent.UpdateInfo();
-            
-            if (StateMachine != null)
-            {
-                StateMachine.Update();
-            }
+            if (ReflexBehavior != null) ReflexBehavior.Update();
+            if (StateMachine != null) StateMachine.Update();
             //NOTE: Removed Obscale Component, this makes the AI much slower
             step = speed *2f * Time.deltaTime;
             navMeshAgent.speed = step;

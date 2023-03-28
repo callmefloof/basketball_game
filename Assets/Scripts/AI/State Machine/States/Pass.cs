@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using Assets.Scripts.AI.State_Machine.States.Base;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,14 @@ namespace Assets.Scripts.AI.State_Machine.States
             return bMax;
         }
 
+        //Stand Still for 1 second
+        public IEnumerator Wait()
+        {
+            float speed = baller.speed;
+            baller.speed = 0f;
+            yield return new WaitForSeconds(1f);
+            baller.speed = speed;
+        }
 
 
         public override void Execute()
@@ -49,9 +58,12 @@ namespace Assets.Scripts.AI.State_Machine.States
             List<Vector3> enemyPositions = new List<Vector3>();
 
             baller.environmentInfoComponent.EnemyTeam.ForEach(x => enemyPositions.Add(x.transform.position));
-            Vector3 averagedEnemyPositions = new Vector3(enemyPositions.Sum(x => x.x), enemyPositions.Sum(x => x.y), enemyPositions.Sum(x => x.z));
+            Vector3 averagedEnemyPositions = new Vector3(enemyPositions.Average(x => x.x), enemyPositions.Average(x => x.y), enemyPositions.Average(x => x.z));
             Baller nearestTeamBaller = GetFurthestPlayer(averagedEnemyPositions);
-
+            nearestTeamBaller.receivingPass = true;
+            var targetDestination = nearestTeamBaller.transform.position + nearestTeamBaller.transform.forward;
+            nearestTeamBaller.receivedPassDestination = targetDestination;
+            baller.StartCoroutine(Wait());
             baller.StateMachine.ChangeState(new ShootingState(baller, nearestTeamBaller.transform.position));
         }
 

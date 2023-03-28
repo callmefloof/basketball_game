@@ -1,6 +1,9 @@
 ﻿using Assets.Scripts.AI.Environment;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using Assets.Scripts.AI.State_Machine.States.Base;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SubsystemsImplementation;
 
 namespace Assets.Scripts.AI.State_Machine.States
@@ -10,7 +13,7 @@ namespace Assets.Scripts.AI.State_Machine.States
 
         // Use this for initialization
         public Baller baller;
-
+        
         public Examine(IStateMachineMember owner) : base(owner)
         {
             baller = owner as Baller;
@@ -51,6 +54,9 @@ namespace Assets.Scripts.AI.State_Machine.States
                     break;
                 case BallerInfo.PassBall:
                     baller.StateMachine.ChangeState(new Pass(baller));
+                    break;
+                case BallerInfo.ReceivePassedBall:
+                    baller.StateMachine.ChangeState(new ReceivePass(baller));
                     break;
                 //add pass functions 
             }

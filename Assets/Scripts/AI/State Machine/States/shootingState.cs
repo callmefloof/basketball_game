@@ -54,12 +54,12 @@ namespace Assets.Scripts.AI.State_Machine.States
             //    baller.navMeshAgent.destination = shootposition;
             //}
 
-            var targetHoop = baller.environmentInfoComponent.EnemyHoop.transform.position;
+            
             //Level Y to the baller so we don't tilt
-            var targetHoopXZ = new Vector3(targetHoop.x, baller.transform.position.y, targetHoop.z);
+            var targetXZ = new Vector3(target.x, baller.transform.position.y, target.z);
             baller.navMeshAgent.updateRotation = false;
             baller.navMeshAgent.updatePosition = false;
-            baller.transform.LookAt(targetHoopXZ);
+            baller.transform.LookAt(targetXZ);
             Debug.Log(baller.shoot);
             ballObject.StartCoroutine(ballObject.ShootBall(target));
             baller.navMeshAgent.updateRotation = true;

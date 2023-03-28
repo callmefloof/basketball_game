@@ -15,7 +15,7 @@ using UnityEngine.Internal;
 
 namespace Assets.Scripts.AI.Environment
 {
-    public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop, AvoidOpponent, PassBall}
+    public enum BallerInfo {ShouldDefend, ShouldAttack, ShouldShoot, ShouldGetCloserToEnemyHoop, ShouldGetCloserToTeamHoop, AvoidOpponent, PassBall, ReceivePassedBall}
     
     public class EnvironmentInfoComponent
     {
@@ -214,7 +214,9 @@ namespace Assets.Scripts.AI.Environment
             float chance = distanceFactor * (Owner.Defensiveness*defensivenessFactor - Owner.Aggression*agressionFactor);
 
             //if we are too close to another player, don't bother trying to pass
-            if(Vector3.Distance(Owner.transform.position, GetFurthestPlayer(Owner.transform.position).transform.position) < maxDistanceEnemy) return false;
+            var furthestPlayer = GetFurthestPlayer(Owner.transform.position);
+            if(furthestPlayer == null) return false;
+            if (Vector3.Distance(Owner.transform.position, furthestPlayer.transform.position) < maxDistanceEnemy) return false;
 
             return chance > rng;
 
@@ -234,9 +236,11 @@ namespace Assets.Scripts.AI.Environment
                 true => ShouldIntercept(ownerPosition)
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldDefend,
+                false when Owner.receivingPass => BallerInfo.ReceivePassedBall,
                 false => ShouldPickUpBall()
                     ? BallerInfo.ShouldAttack
                     : BallerInfo.ShouldDefend
+                
             };
         }
     }

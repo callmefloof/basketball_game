@@ -71,7 +71,7 @@ namespace Assets.Scripts.AI.State_Machine.States
             List<Vector3> enemyPositions = new List<Vector3>();
 
             baller.environmentInfoComponent.EnemyTeam.ForEach(x => enemyPositions.Add(x.transform.position));
-            Vector3 averagedEnemyPosition = new Vector3(enemyPositions.Sum(x => x.x), enemyPositions.Sum(x => x.y), enemyPositions.Sum(x => x.z));
+            Vector3 averagedEnemyPosition = new Vector3(enemyPositions.Average(x => x.x), enemyPositions.Average(x => x.y), enemyPositions.Average(x => x.z));
             Vector3 newPosition = Vector3.Lerp(hoopPosition, averagedEnemyPosition, baller.Defensiveness);
             Debug.DrawLine(newPosition, new Vector3(newPosition.x, 10000, newPosition.z));
 
