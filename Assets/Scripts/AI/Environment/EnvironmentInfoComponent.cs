@@ -222,7 +222,7 @@ namespace Assets.Scripts.AI.Environment
 
 
         }
-        public void UpdateInfo()
+        public virtual void UpdateInfo()
         {
             
             var ownerPosition = Owner.transform.position;
