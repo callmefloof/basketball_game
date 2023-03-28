@@ -177,10 +177,20 @@ namespace Assets.Scripts.Objects
                 {
                     continue;
                 }
+                float leftDribblePointX = _dribbleTransform.position.x + (_dribbleTransform.parent.parent.position.x - _dribbleTransform.position.x);
 
-                Vector3 landingSpot = new Vector3(_dribbleTransform.position.x,
+                float modifierX = Mathf.Lerp(_dribbleTransform.position.x, leftDribblePointX, 0.5f + (Mathf.Sin(Time.time * _dribbleTime) / 2));
+                
+
+                if (ballHeldBy.navMeshAgent.speed > 10f)
+                {
+                    if(modifierX > _dribbleTransform.position.x - 0.1f || modifierX == _dribbleTransform.position.x)
+                        modifierX = _dribbleTransform.position.x;
+                }
+                Vector3 landingSpot = new Vector3(modifierX,
                     _floorPosition.y + _sphereCollider.radius / 2, _dribbleTransform.position.z);
                 _rigidBody.position = landingSpot + Vector3.up * Mathf.Abs(Mathf.Sin(Time.time * _dribbleTime));
+
             }
         }
 

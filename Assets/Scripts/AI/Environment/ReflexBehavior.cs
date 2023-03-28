@@ -54,11 +54,17 @@ namespace Assets.Scripts.AI.Environment
             Vector3 ballerPostionXZ = new Vector3(Owner.transform.position.x, 0f, Owner.transform.position.z);
             float angle = Vector3.Angle(ballPositionXZ, ballerPostionXZ);
             float distance = Vector3.Distance(ballerPostionXZ, ballPositionXZ);
-            if ((Owner.environmentInfoComponent.Ball.BallShotBy == Owner || Owner.receivingPass) 
-                && Owner.team == Owner.environmentInfoComponent.Ball.BallShotBy.team) return;
-            if (angle > 15f && angle < -15f) return;
+            if (Owner.environmentInfoComponent.Ball.BallShotBy == Owner || Owner.receivingPass) return;
+            if (Owner.team == Owner.environmentInfoComponent.Ball.BallShotBy.team) return;
+            Vector3 relativePositionXZ = ballPositionXZ - ballerPostionXZ;
+            bool isInFront = Vector3.Dot(Owner.transform.forward, relativePositionXZ) > 0.0f;
 
-                if (!jumpingLocked)
+
+            if (!isInFront) return;
+            if (angle > 15f && angle < -15f) return;
+            if (distance > 10f) return;
+
+            if (!jumpingLocked)
             {
                 
                 Owner.StartCoroutine(PeformJump());
