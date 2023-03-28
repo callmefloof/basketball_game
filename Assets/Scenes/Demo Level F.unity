@@ -620,6 +620,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BALLER  (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1571518956474442740, guid: e8c4a97ed08239d45a96705483cc7b35,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1571518956474442747, guid: e8c4a97ed08239d45a96705483cc7b35,
         type: 3}
       propertyPath: m_Enabled
@@ -1504,9 +1509,12 @@ MonoBehaviour:
   navMeshObstacle: {fileID: 0}
   team: 1
   shoot: 0
+  receivingPass: 0
+  receivedPassDestination: {x: 0, y: 0, z: 0}
   ballerColor: {r: 0, g: 0, b: 0, a: 0}
   _aggression: 0.5
   _defensiveness: 0.5
+  JumpVelocity: 2
 --- !u!195 &798069147
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2267,15 +2275,17 @@ MonoBehaviour:
   _rigidBody: {fileID: 0}
   _dribbleTransform: {fileID: 0}
   _floorPosition: {x: 0, y: 0, z: 0}
-  _isHittingFloor: 0
+  <IsHittingFloor>k__BackingField: 0
   _dribbleTime: 6
   _dribbleAmplitude: 1
   _drop: 0
   CurrentGraceTime: 0
   GraceTime: 1.5
   BallHasGraceTime: 0
+  <BallShotBy>k__BackingField: {fileID: 0}
   test: 0
   isBeingShot: 0
+  isBeingDropped: 0
 --- !u!4 &1666037205 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 374ad28a3f94b5645a61cb3998cd0981,
@@ -2507,6 +2517,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BALLER  (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1571518956474442740, guid: e8c4a97ed08239d45a96705483cc7b35,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1571518956474442747, guid: e8c4a97ed08239d45a96705483cc7b35,
         type: 3}
