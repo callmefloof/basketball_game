@@ -69,7 +69,7 @@ namespace Assets.Scripts.AI.Environment
             }
             return (enemyBallers, teamBallers);
         }
-        private (float enemyHoopDistance, float ownerHoopDistance) GetHoopDistances()
+        protected (float enemyHoopDistance, float ownerHoopDistance) GetHoopDistances()
         {
             //set y to 0 to return a "2D" result.
             var ownerPosFlattened = new Vector3(Owner.transform.position.x, 0, Owner.transform.position.y);
@@ -78,7 +78,7 @@ namespace Assets.Scripts.AI.Environment
 
             return (Vector3.Distance(ownerPosFlattened, enemyHoopPosFlattened), Vector3.Distance(ownerPosFlattened, ownerHoopPosFlattened));
         }
-        private (float enemyHoopDistance, float ownerHoopDistance) GetHoopDistances(Baller baller)
+        protected (float enemyHoopDistance, float ownerHoopDistance) GetHoopDistances(Baller baller)
         {
             //set y to 0 to return a "2D" result.
             var ownerPosFlattened = new Vector3(baller.transform.position.x, 0, baller.transform.position.y);
@@ -87,20 +87,20 @@ namespace Assets.Scripts.AI.Environment
 
             return (Vector3.Distance(ownerPosFlattened, enemyHoopPosFlattened), Vector3.Distance(ownerPosFlattened, ownerHoopPosFlattened));
         }
-        private (List<float> enemyDistances, List<float> teamDistances) GetDistances()
+        protected (List<float> enemyDistances, List<float> teamDistances) GetDistances()
         {
             List<float> enemyBallerDistances = EnemyTeam.Select(enemyBaller => Vector3.Distance(Owner.transform.position, enemyBaller.transform.position)).ToList();
 
             List<float> ourTeamMembersDistances = (from teamBaller in Team where teamBaller != Owner select Vector3.Distance(Owner.transform.position, teamBaller.transform.position)).ToList();
             return (enemyBallerDistances, ourTeamMembersDistances);
         }
-        private (List<float> enemyDistances, List<float> teamDistances) GetDistances(Baller baller)
+        protected (List<float> enemyDistances, List<float> teamDistances) GetDistances(Baller baller)
         {
             List<float> enemyBallerDistances = baller.environmentInfoComponent.EnemyTeam.Select(enemyBaller => Vector3.Distance(baller.transform.position, enemyBaller.transform.position)).ToList();
             List<float> ourTeamMembersDistances = (from teamBaller in baller.environmentInfoComponent.Team where teamBaller != Owner select Vector3.Distance(baller.transform.position, teamBaller.transform.position)).ToList();
             return (enemyBallerDistances, ourTeamMembersDistances);
         }
-        private void SetAvoidance()
+        protected void SetAvoidance()
         {
             //Owner.navMeshAgent.avoidancePriority = Mathf.FloorToInt(Mathf.Lerp(minAvoidancePriority, maxAvoidanceDistance, Owner.Aggression));
             Owner.navMeshAgent.radius = Mathf.FloorToInt(Mathf.Lerp(minAvoidanceDistance, maxAvoidanceDistance, Owner.Defensiveness));
