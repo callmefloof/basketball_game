@@ -149,7 +149,9 @@ namespace Assets.Scripts.AI.Environment
                 Vector3 centerPointPosXZ = new Vector3(centerPoint.transform.position.x, Owner.transform.position.y, centerPoint.transform.position.z);
                 float distanceFromCentreToHoop = Vector3.Distance(centerPointPosXZ, enemyHoopPosXZ);
                 float distanceFromPlayerToHoop = Vector3.Distance(Owner.transform.position, enemyHoopPosXZ);
-                
+                //prevents repeated shooting when it would only shoot from below the hoop
+                if (distanceFromPlayerToHoop < 3f) return false;
+
                 float chance = (1f-(distanceFromPlayerToHoop / distanceFromCentreToHoop) +(Owner.Aggression - Owner.Defensiveness));
 
                 return chance > UnityEngine.Random.Range(0f, 1f);
@@ -173,21 +175,22 @@ namespace Assets.Scripts.AI.Environment
             return bMin;
         }
 
-        private Baller GetFurthestPlayer(Vector3 from)
+        private Baller[] GetFurthestPlayer(Vector3 from)
         {
-            Baller bMax = null;
-            float maxDist = 0f;
+            Baller[] bRanking = Team.Where(x => x != Owner).OrderBy(x=> Vector3.Distance(x.transform.position, from)).ToArray();
+            //float maxDist = 0f;
 
-            foreach (Baller b in Team)
-            {
-                float dist = Vector3.Distance(b.transform.position, from);
-                if (dist > maxDist)
-                {
-                    bMax = b;
-                    maxDist = dist;
-                }
-            }
-            return bMax;
+            //foreach (Baller b in Team)
+            //{
+            //    if (b == Owner) continue;
+            //    float dist = Vector3.Distance(b.transform.position, from);
+            //    if (dist > maxDist)
+            //    {
+            //        bMax = b;
+            //        maxDist = dist;
+            //    }
+            //}
+            return bRanking;
         }
 
         private bool ShouldPass()
@@ -207,16 +210,21 @@ namespace Assets.Scripts.AI.Environment
             float distanceClamped = Mathf.Clamp(distance, minDistanceEnemy, maxDistanceEnemy);
             
             
-            //1 if distance is 1, 0 if distance is 10
+            //1 if distance is 1, 0 if distance is >5
+            
             float distanceFactor = Mathf.Abs(1f-(distanceClamped - minDistanceEnemy/ (maxDistanceEnemy - minDistanceEnemy)));
             
-            
+
             float chance = distanceFactor * (Owner.Defensiveness*defensivenessFactor - Owner.Aggression*agressionFactor);
 
             //if we are too close to another player, don't bother trying to pass
-            var furthestPlayer = GetFurthestPlayer(Owner.transform.position);
-            if(furthestPlayer == null) return false;
-            if (Vector3.Distance(Owner.transform.position, furthestPlayer.transform.position) < maxDistanceEnemy) return false;
+            var furthestPlayers = GetFurthestPlayer(Owner.transform.position);
+            if(furthestPlayers == null) return false;
+            string zoneTagTeam = Owner.team == 1 ? "ZoneOne" : "ZoneTwo";
+            var shootingZoneFriendly = GameObject.FindGameObjectWithTag(zoneTagTeam).GetComponent<ShootingZone>();
+            if (shootingZoneFriendly == null) return false;
+            if (furthestPlayers.All(x => shootingZoneFriendly.BallersInZone.Contains(x) && !shootingZoneFriendly.BallersInZone.Contains(Owner))) return false;
+            if (furthestPlayers.All(x=> Vector3.Distance(Owner.transform.position, x.transform.position) < maxDistanceEnemy)) return false;
 
             return chance > rng;
 
