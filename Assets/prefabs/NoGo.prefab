@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3675210259649589837}
   - component: {fileID: 391556805084306342}
   - component: {fileID: 4618986231631816533}
+  - component: {fileID: 1497649076263978923}
   m_Layer: 0
   m_Name: NoGo
   m_TagString: Untagged
@@ -41,7 +42,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2872845418366116977}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 5, y: 1, z: 4}
@@ -58,4 +59,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1601b3f9e0cf6974b96d4580fd0e0ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
+  Magnitude: 100
+  Rate: 10
+  minSizeX: 1
+  minSizeZ: 1
+  Expanding: 0
+--- !u!208 &1497649076263978923
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2872845418366116977}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 2.5, y: 0.5, z: 2}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

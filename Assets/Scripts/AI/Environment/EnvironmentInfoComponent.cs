@@ -206,8 +206,8 @@ namespace Assets.Scripts.AI.Environment
             float distance = Vector3.Distance(Owner.transform.position, nearestEnemy.transform.position);
             
             float distanceClamped = Mathf.Clamp(distance, minDistanceEnemy, maxDistanceEnemy);
-            
-            
+
+            if (distance > maxDistanceEnemy) return false;
             //1 if distance is 1, 0 if distance is >5
             
             float distanceFactor = Mathf.Abs(1f-(distanceClamped - minDistanceEnemy/ (maxDistanceEnemy - minDistanceEnemy)));
