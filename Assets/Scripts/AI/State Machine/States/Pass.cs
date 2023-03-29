@@ -30,6 +30,7 @@ namespace Assets.Scripts.AI.State_Machine.States
             
             foreach (Baller b in baller.environmentInfoComponent.Team)
             {
+                if (b == baller) continue;
                 float dist = Vector3.Distance(b.transform.position, from);
                 if (dist > maxDist)
                 {
