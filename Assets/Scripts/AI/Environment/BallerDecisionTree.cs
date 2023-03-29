@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts;
+using System.Linq;
 using Assets.Scripts.AI.Environment;
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using Assets.Scripts.AI.State_Machine.States;
 using Assets.Scripts.Objects;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BallerDecisionTree : EnvironmentInfoComponent
@@ -15,6 +17,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     private EnvironmentInfoComponent environment;
     public  GameObject ownHoop = GameObject.FindWithTag("HoopTwo");
     public GameObject enemyHoop = GameObject.FindWithTag("HoopOne");
+    public bool ballIsClose;
 
 
     public BallerDecisionTree(Baller owner) : base(owner)
@@ -58,20 +61,27 @@ public class BallerDecisionTree : EnvironmentInfoComponent
             
     }
 
-    private bool ShouldDefend()
+    private void GetDistances()
     {
         
-        if (Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 1f && 
-            Vector3.Distance(environment.Ball.transform.position, ownHoop.transform.position) < 2f)
+    }
+    private bool ShouldDefend()
+    {
+       bool teammateHasBall = !environment.Team.All(teammate => teammate.heldBall == false);
+        
+        foreach (var enemy in environment.EnemyTeam)
         {
-            return true;
-        }
 
-        foreach (var opponent in environment.EnemyTeam)
-        {
-            if (Vector3.Distance(opponent.transform.position, environment.Ball.transform.position) < 1f)
+            string zoneTagTeam = Owner.team == 1 ? "ZoneOne" : "ZoneTwo";
+           var shootingZoneFriendly = GameObject.FindWithTag(zoneTagTeam).GetComponent<ShootingZone>();
+            
+            if (!owner.heldBall && enemy.heldBall && !teammateHasBall)
             {
-                return true;
+                if (shootingZoneFriendly)
+                {
+                    
+                    return true;
+                }
             }
         }
         
@@ -79,13 +89,13 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     }
     private bool ShouldAttack()
     {
-        if (Vector3.Distance(environment.Ball.transform.position, enemyHoop.transform.position) < 
-            Vector3.Distance(environment.Ball.transform.position, ownHoop.transform.position))
-        {
-            return true;
-        }
+        ballIsClose = Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 3f;
+        bool teammateHasBall = !environment.Team.All(teammate => teammate.heldBall == false);
+        bool closeToEnemyBasket = Vector3.Distance(owner.transform.position, environment.EnemyHoop.transform.position) < 10f;
 
-        return false;
+        return (ballIsClose || teammateHasBall || closeToEnemyBasket);
+        
+        
     }
     private bool ShouldShoot()
     {
