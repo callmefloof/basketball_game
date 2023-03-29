@@ -54,7 +54,14 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
             navMeshAgent = GetComponent<NavMeshAgent>();
             navMeshObstacle = GetComponent<NavMeshObstacle>();
             StateMachine = new StateMachine();
-            environmentInfoComponent = environmentInfoComponent == null ? new EnvironmentInfoComponent(this) : environmentInfoComponent;
+            if (team == 2)
+            {
+                environmentInfoComponent = new BallerDecisionTree(this);
+            }
+            else
+            {
+                environmentInfoComponent = environmentInfoComponent == null ? new EnvironmentInfoComponent(this) : environmentInfoComponent;
+            }
             ball = FindFirstObjectByType<Ball>();
             shoot = false;
 
@@ -82,7 +89,15 @@ namespace Assets.Scripts.AI.State_Machine.Demo_StateMachine
 
             receivingPass = receivingPass && (!ball.IsHittingFloor && (!ball.ballHeldBy == this && ball.ballHeldBy == null)) ? receivingPass : false;
 
-            environmentInfoComponent.UpdateInfo();
+            if (team == 2)
+            {
+                (environmentInfoComponent as BallerDecisionTree).UpdateInfo();
+            }
+            else
+            {
+                environmentInfoComponent.UpdateInfo();    
+            }
+            
             if (ReflexBehavior != null) ReflexBehavior.Update();
             if (StateMachine != null) StateMachine.Update();
             //NOTE: Removed Obscale Component, this makes the AI much slower
