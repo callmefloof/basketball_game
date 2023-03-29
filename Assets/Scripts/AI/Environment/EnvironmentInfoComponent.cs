@@ -149,8 +149,6 @@ namespace Assets.Scripts.AI.Environment
                 Vector3 centerPointPosXZ = new Vector3(centerPoint.transform.position.x, Owner.transform.position.y, centerPoint.transform.position.z);
                 float distanceFromCentreToHoop = Vector3.Distance(centerPointPosXZ, enemyHoopPosXZ);
                 float distanceFromPlayerToHoop = Vector3.Distance(Owner.transform.position, enemyHoopPosXZ);
-                //prevents repeated shooting when it would only shoot from below the hoop
-                if (distanceFromPlayerToHoop < 3f) return false;
 
                 float chance = (1f-(distanceFromPlayerToHoop / distanceFromCentreToHoop) +(Owner.Aggression - Owner.Defensiveness));
 

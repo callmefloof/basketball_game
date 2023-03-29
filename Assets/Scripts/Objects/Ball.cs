@@ -173,7 +173,7 @@ namespace Assets.Scripts.Objects
             while (true)
             {
                 yield return new WaitForFixedUpdate();
-                if (!isBeingHeld)
+                if (!isBeingHeld || ballHeldBy == null)
                 {
                     continue;
                 }

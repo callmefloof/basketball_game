@@ -55,6 +55,7 @@ namespace Assets.Scripts.AI.Environment
             float angle = Vector3.Angle(ballPositionXZ, ballerPostionXZ);
             float distance = Vector3.Distance(ballerPostionXZ, ballPositionXZ);
             if (Owner.environmentInfoComponent.Ball.BallShotBy == Owner || Owner.receivingPass) return;
+            if (Owner.environmentInfoComponent.Ball.BallShotBy == null) return;
             if (Owner.team == Owner.environmentInfoComponent.Ball.BallShotBy.team) return;
             Vector3 relativePositionXZ = ballPositionXZ - ballerPostionXZ;
             bool isInFront = Vector3.Dot(Owner.transform.forward, relativePositionXZ) > 0.0f;
