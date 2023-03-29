@@ -37,7 +37,7 @@ namespace Assets.Scripts.AI.Environment
         public readonly int minAvoidancePriority = 99;
         public readonly int maxAvoidancePriority = 0;
 
-        public BallerInfo BallerSuggestion { get; private set; }
+        public BallerInfo BallerSuggestion { get; protected set; }
         public EnvironmentInfoComponent(Baller owner)
         {
 

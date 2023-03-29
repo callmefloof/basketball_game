@@ -29,31 +29,31 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     {
         if (this.ShouldDefend())
         {
-           
+            BallerSuggestion = BallerInfo.ShouldDefend;
         }
         else if (this.ShouldAttack())
         {
-            
+            BallerSuggestion = BallerInfo.ShouldAttack;
         }
         else if (this.ShouldShoot())
         {
-            
+            BallerSuggestion = BallerInfo.ShouldShoot;
         }
         else if (this.ShouldGetCloserToEnemyHoop())
         {
-            
+            BallerSuggestion = BallerInfo.ShouldGetCloserToEnemyHoop;
         }
         else if (this.ShouldGetCloserToTeamHoop())
         {
-            
+            BallerSuggestion = BallerInfo.ShouldGetCloserToTeamHoop;
         }
         else if (this.AvoidOpponent())
         {
-            
+            BallerSuggestion = BallerInfo.AvoidOpponent;
         }
         else if (this.PassBall())
         {
-           
+            BallerSuggestion = BallerInfo.PassBall;
         }
             
     }
@@ -61,15 +61,15 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     private bool ShouldDefend()
     {
         
-        if (Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 5f && 
-            Vector3.Distance(environment.Ball.transform.position, ownHoop.transform.position) < 10f)
+        if (Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 1f && 
+            Vector3.Distance(environment.Ball.transform.position, ownHoop.transform.position) < 2f)
         {
             return true;
         }
 
         foreach (var opponent in environment.EnemyTeam)
         {
-            if (Vector3.Distance(opponent.transform.position, environment.Ball.transform.position) < 5f)
+            if (Vector3.Distance(opponent.transform.position, environment.Ball.transform.position) < 1f)
             {
                 return true;
             }
@@ -114,9 +114,9 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     }
     private bool AvoidOpponent()
     {
-        foreach (Baller opponent in environment.EnemyTeam)
+        foreach (var opponent in environment.EnemyTeam)
         {
-            if (Vector3.Distance(opponent.transform.position, owner.transform.position) < 5f)
+            if (Vector3.Distance(opponent.transform.position, owner.transform.position) < 1f)
             {
                 return true;
             }
@@ -127,7 +127,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     {
         if (owner.heldBall)
         {
-            foreach (Baller teammate in environment.Team)
+            foreach (var teammate in environment.Team)
             {
                 if (Vector3.Distance(owner.transform.position, teammate.transform.position) < 10f)
                 {
