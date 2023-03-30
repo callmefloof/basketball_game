@@ -156,7 +156,7 @@ namespace Assets.Scripts.AI.Environment
             }
             //
         }
-        private Baller GetClosestEnemy()
+        protected Baller GetClosestEnemy()
         {
             Baller bMin = null;
             float minDist = Mathf.Infinity;
@@ -173,7 +173,7 @@ namespace Assets.Scripts.AI.Environment
             return bMin;
         }
 
-        private Baller[] GetFurthestPlayer(Vector3 from)
+        protected Baller[] GetFurthestPlayer(Vector3 from)
         {
             Baller[] bRanking = Team.Where(x => x != Owner).OrderBy(x=> Vector3.Distance(x.transform.position, from)).ToArray();
             //float maxDist = 0f;

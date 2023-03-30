@@ -61,25 +61,24 @@ public class BallerDecisionTree : EnvironmentInfoComponent
             
     }
 
-    private void GetDistances()
+    /*private void GetDistances()
     {
         
-    }
+    }*/
+    
     private bool ShouldDefend()
     {
-       bool teammateHasBall = !environment.Team.All(teammate => teammate.heldBall == false);
         
         foreach (var enemy in environment.EnemyTeam)
         {
 
             string zoneTagTeam = Owner.team == 1 ? "ZoneOne" : "ZoneTwo";
-           var shootingZoneFriendly = GameObject.FindWithTag(zoneTagTeam).GetComponent<ShootingZone>();
+            var defendingZone = GameObject.FindWithTag(zoneTagTeam).GetComponent<ShootingZone>();
             
-            if (!owner.heldBall && enemy.heldBall && !teammateHasBall)
+            if (!owner.heldBall && enemy.heldBall && !teamHeldBall())
             {
-                if (shootingZoneFriendly)
+                if (defendingZone)
                 {
-                    
                     return true;
                 }
             }
@@ -90,52 +89,66 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     private bool ShouldAttack()
     {
         ballIsClose = Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 3f;
-        bool teammateHasBall = !environment.Team.All(teammate => teammate.heldBall == false);
+        
         bool closeToEnemyBasket = Vector3.Distance(owner.transform.position, environment.EnemyHoop.transform.position) < 10f;
 
-        return (ballIsClose || teammateHasBall || closeToEnemyBasket);
+        return (ballIsClose && !owner.heldBall);
         
         
     }
     private bool ShouldShoot()
     {
-        if (Vector3.Distance(owner.transform.position, enemyHoop.transform.position) < 10f &&
-            Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 2f)
+        if (owner.heldBall  && IsCloseToEnemyHoop())
         {
             return true;
         }
+
         return false;
     }
     private bool ShouldGetCloserToEnemyHoop()
     {
-        if (Vector3.Distance(owner.transform.position, enemyHoop.transform.position) > 20f)
+        if (owner.heldBall)
         {
-            return true;
+            if (!IsCloseToEnemyHoop())
+            {
+                return true;
+            }
+        }
+
+        else
+        {
+            if (teamHeldBall())
+            {
+                if (!IsCloseToEnemyHoop())
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
     private bool ShouldGetCloserToTeamHoop()
     {
-        if (!owner.heldBall && Vector3.Distance(owner.transform.position, ownHoop.transform.position) > 20f)
+        /*if (!owner.heldBall && Vector3.Distance(owner.transform.position, ownHoop.transform.position) > 20f)
         {
             return true;
-        }
+        }*/
         return false;
     }
     private bool AvoidOpponent()
     {
-        foreach (var opponent in environment.EnemyTeam)
+        /*foreach (var opponent in environment.EnemyTeam)
         {
             if (Vector3.Distance(opponent.transform.position, owner.transform.position) < 1f)
             {
                 return true;
             }
-        }
+        }*/
         return false;
     }
     private bool PassBall()
     {
-        if (owner.heldBall)
+        /*if (owner.heldBall)
         {
             foreach (var teammate in environment.Team)
             {
@@ -144,7 +157,61 @@ public class BallerDecisionTree : EnvironmentInfoComponent
                     return true;
                 }
             }
+        }*/
+        return false;
+    }
+    
+    /*private bool HasFreeTeammate()
+    {
+        // Check if there is a free teammate to pass to
+        // Return true if there is, false otherwise
+        return (IsEnemyNearbyTeammate());
+
+    }*/
+    
+    private bool IsEnemyNearbyTeammate()
+    {
+        // Check if there is a free teammate to pass to
+        // Return true if there is, false otherwise
+        foreach (var enemy in EnemyTeam)
+        {
+            foreach (var teammate in Team)
+            {
+                if(teammate == owner){continue;}
+                float distance = Vector3.Distance(enemy.transform.position, teammate.transform.position);
+                if (distance < 5f) // adjust the distance threshold as needed
+                {
+                    return true;
+                }
+                
+            }
+            
+        }
+
+        return false;
+    }
+
+    private bool teamHeldBall()
+    {
+        bool teammateHasBall = !environment.Team.Where(teammate => teammate != owner).All(teammate => !teammate.heldBall);
+        
+        foreach (var enemy in environment.EnemyTeam)
+        {
+            if (!owner.heldBall && !enemy.heldBall && teammateHasBall)
+            {
+                return true;
+            }
         }
         return false;
     }
+    
+    private bool IsCloseToEnemyHoop()
+    {
+        // Check if the player is close to the enemy hoop
+        // Return true if they are, false otherwise
+        GameObject enemyHoop = GameObject.FindGameObjectWithTag("HoopOne");
+        float distanceToHoop = Vector3.Distance(owner.transform.position, enemyHoop.transform.position);
+        return distanceToHoop < 6f;
+    }
+    
 }
