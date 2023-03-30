@@ -13,6 +13,7 @@ namespace Assets.Scripts
         public Color TeamOneColor = Color.red;
         public Color TeamTwoColor = Color.blue;
         public static GameManager Instance
+        
         {
             get
             {

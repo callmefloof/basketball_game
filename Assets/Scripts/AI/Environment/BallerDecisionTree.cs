@@ -95,7 +95,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     }
     private bool ShouldShoot()
     {
-        if (owner.heldBall  && IsCloseToEnemyHoop())
+        if (owner.heldBall  && IsCloseToEnemyHoop() && !IsEnemyNear(owner.transform.position, 1f))
         {
             return true;
         }
@@ -126,10 +126,14 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     }
     private bool ShouldGetCloserToTeamHoop()
     {
-        /*if (!owner.heldBall && Vector3.Distance(owner.transform.position, ownHoop.transform.position) > 20f)
+        foreach (var enemy in environment.EnemyTeam)
         {
-            return true;
-        }*/
+            if (enemy.heldBall && EnemyCloseToOurSide())
+            {
+                return true;
+            }
+        }
+
         return false;
     }
     private bool AvoidOpponent()
@@ -145,16 +149,27 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     }
     private bool PassBall()
     {
-        /*if (owner.heldBall)
+        if (owner.heldBall)
         {
             foreach (var teammate in environment.Team)
             {
-                if (Vector3.Distance(owner.transform.position, teammate.transform.position) < 10f)
+                if (teammate != owner && !teammate.heldBall && !IsEnemyNearbyTeammate())
                 {
                     return true;
                 }
             }
-        }*/
+
+            if (IsEnemyNear(owner.transform.position, 1f) && ShouldShoot())
+            {
+                return true;
+            }
+        }
+        
+        if (IsEnemyNearbyTeammate())
+        {
+            return false;
+        }
+        
         return false;
     }
     
@@ -165,10 +180,22 @@ public class BallerDecisionTree : EnvironmentInfoComponent
         return (IsEnemyNearbyTeammate());
 
     }*/
-    
+
+    private bool IsEnemyNear(Vector3 position, float distance)
+    {
+        foreach (var enemy in environment.EnemyTeam)
+        {
+            if (Vector3.Distance(position, enemy.transform.position) < distance)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
     private bool IsEnemyNearbyTeammate()
     {
-        // Check if there is a free teammate to pass to
+        // Check if there is a opponent close to our teammate
         // Return true if there is, false otherwise
         foreach (var enemy in EnemyTeam)
         {
@@ -176,15 +203,12 @@ public class BallerDecisionTree : EnvironmentInfoComponent
             {
                 if(teammate == owner){continue;}
                 float distance = Vector3.Distance(enemy.transform.position, teammate.transform.position);
-                if (distance < 5f) // adjust the distance threshold as needed
+                if (distance < 1f) // adjust the distance threshold as needed
                 {
                     return true;
                 }
-                
             }
-            
         }
-
         return false;
     }
 
@@ -209,6 +233,24 @@ public class BallerDecisionTree : EnvironmentInfoComponent
         GameObject enemyHoop = GameObject.FindGameObjectWithTag("HoopOne");
         float distanceToHoop = Vector3.Distance(owner.transform.position, enemyHoop.transform.position);
         return distanceToHoop < 8f;
+    }
+
+    private bool EnemyCloseToOurSide()
+    {
+        // Check if the opposing team is coming closer to our half of the court 
+        // Return true if they are, false otherwise 
+        foreach (var enemy in environment.EnemyTeam)
+        {
+            string zoneTagTeam = Owner.team == 1 ? "ZoneOne" : "ZoneTwo";
+            var defendingZone = GameObject.FindWithTag(zoneTagTeam).GetComponent<ShootingZone>();
+            float distanceToOurSide = Vector3.Distance(enemy.transform.position, defendingZone.transform.position);
+
+            if (distanceToOurSide < 5f)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
 }
