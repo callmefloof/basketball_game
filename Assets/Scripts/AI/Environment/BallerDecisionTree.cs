@@ -90,10 +90,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     {
         ballIsClose = Vector3.Distance(owner.transform.position, environment.Ball.transform.position) < 3f;
         
-        bool closeToEnemyBasket = Vector3.Distance(owner.transform.position, environment.EnemyHoop.transform.position) < 10f;
-
         return (ballIsClose && !owner.heldBall);
-        
         
     }
     private bool ShouldShoot()
@@ -211,7 +208,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
         // Return true if they are, false otherwise
         GameObject enemyHoop = GameObject.FindGameObjectWithTag("HoopOne");
         float distanceToHoop = Vector3.Distance(owner.transform.position, enemyHoop.transform.position);
-        return distanceToHoop < 6f;
+        return distanceToHoop < 8f;
     }
     
 }
