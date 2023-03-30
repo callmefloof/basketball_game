@@ -222,7 +222,7 @@ namespace Assets.Scripts.AI.Environment
             var shootingZoneFriendly = GameObject.FindGameObjectWithTag(zoneTagTeam).GetComponent<ShootingZone>();
             if (shootingZoneFriendly == null) return false;
             if (furthestPlayers.All(x => shootingZoneFriendly.BallersInZone.Contains(x) && !shootingZoneFriendly.BallersInZone.Contains(Owner))) return false;
-            if(!EnemyTeam.Any(x => shootingZoneFriendly.BallersInZone.Contains(x))) return false;
+            if (!EnemyTeam.Any(x => shootingZoneFriendly.BallersInZone.Contains(x)) && !furthestPlayers.All(x => shootingZoneFriendly.BallersInZone.Contains(x))) return false;
             if (furthestPlayers.All(x=> Vector3.Distance(Owner.transform.position, x.transform.position) < maxDistanceEnemy)) return false;
 
             return chance > rng;
