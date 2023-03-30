@@ -12,6 +12,7 @@ namespace Assets.Scripts
         public Dictionary<string, int> Scores = new Dictionary<string, int>() { { "Team 1", 0 } , {"Team 2", 0} };
         public Color TeamOneColor = Color.red;
         public Color TeamTwoColor = Color.blue;
+       
         public static GameManager Instance
         
         {
