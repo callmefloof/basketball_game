@@ -30,6 +30,7 @@ namespace Assets.Scripts.Objects
                 if(curTestTime > maxTestTime)
                 {
                     hittop = false;
+                    hitbottom = false;
                 }
             }
             else
