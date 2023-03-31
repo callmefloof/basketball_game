@@ -5,20 +5,22 @@
     
     public class CameraTrigger : MonoBehaviour
     {
-        
+        //Camera objects to switch between
         public Camera mainCamera;
         public Camera subCameraRed;
         public Camera subCameraBlue;
+        
+        //List of baller game objects to track for camera positioning 
         public List<GameObject> ballers;
         
-        private bool isCameraOneActive = true;
-
+        //Start is called before the first frame update 
         void Start()
         {
             //Make sure the main camera is the one we start with
             mainCamera.gameObject.SetActive(true);
             subCameraRed.gameObject.SetActive(false);
             subCameraBlue.gameObject.SetActive(false);
+            
             //Create a list to hold all the ballers for future reference and calculation
             ballers.Add(GameObject.Find("BALLER  (1)"));
             ballers.Add(GameObject.Find("BALLER  (2)"));
@@ -26,26 +28,46 @@
             ballers.Add(GameObject.Find("BALLER  (4)"));
         }
         
+        //Update is called once per frame
         void Update()
         {
-            //Switch to Camera Red if in Zone Red
+            //Switch between cameras based on current camera state
+            switch (GetCameraState())
+            {
+                case CameraState.Red:
+                    SwitchCameraRed();
+                    break;
+                case CameraState.Blue:
+                    SwitchCameraBlue();
+                    break;
+                default:
+                    SwitchCameraBack();
+                    break;
+            }
+        }
+        
+        //Enumeration to track camera states
+        enum CameraState
+        {
+            Red,
+            Blue,
+            Main
+        }
+        
+        //Get the current camera state based on which zone the ballers are in
+        private CameraState GetCameraState()
+        {
             if (IsInZoneRed())
             {
-                SwitchCameraRed();
+                return CameraState.Red;
             }
-            //Switch back to main if not in Zone Red
-             if (!IsInZoneRed())
+            else if (IsInZoneBlue())
             {
-                SwitchCameraBack();
+                return CameraState.Blue;
             }
-            if (IsInZoneBlue())
+            else
             {
-                SwitchCameraBlue();
-            }
-            if (!IsInZoneBlue())
-
-            {
-                SwitchCameraBack();
+                return CameraState.Main;
             }
         }
 
@@ -95,6 +117,7 @@
             return false;
         }
 
+        //Functions to switch the cameras
         private void SwitchCameraRed()
         {
             //Switch the camera from main to red side
