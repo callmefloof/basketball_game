@@ -10,7 +10,7 @@
         public Camera subCameraRed;
         public Camera subCameraBlue;
         
-        //List of baller game objects to track for camera positioning 
+            //List of baller game objects to track for camera positioning 
         public List<GameObject> ballers;
         
         //Start is called before the first frame update 
@@ -21,7 +21,7 @@
             subCameraRed.gameObject.SetActive(false);
             subCameraBlue.gameObject.SetActive(false);
             
-            //Create a list to hold all the ballers for future reference and calculation
+            //Add the ballers to a  list to hold all the ballers for future reference and calculation
             ballers.Add(GameObject.Find("BALLER  (1)"));
             ballers.Add(GameObject.Find("BALLER  (2)"));
             ballers.Add(GameObject.Find("BALLER  (3)"));
