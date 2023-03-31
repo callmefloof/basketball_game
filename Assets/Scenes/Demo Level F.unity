@@ -654,7 +654,6 @@ GameObject:
   - component: {fileID: 234283991}
   - component: {fileID: 234283990}
   - component: {fileID: 234283989}
-  - component: {fileID: 234283993}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -761,27 +760,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 25.423, y: 0, z: 0}
---- !u!114 &234283993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 234283988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f612185efaa011a42b9e3178bb3ed375, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainCamera: {fileID: 234283991}
-  subCamera: {fileID: 521380197}
-  ballers: []
 --- !u!1001 &248593081
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1764728786}
     m_Modifications:
     - target: {fileID: 391556805084306342, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -811,12 +795,17 @@ PrefabInstance:
     - target: {fileID: 2872845418366116977, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_Name
-      value: CamZone
+      value: CamZone Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: 2872845418366116977, guid: 666202a7dff9a394b9be5a532ecc8b9f,
+        type: 3}
+      propertyPath: m_TagString
+      value: CamZone2
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 21
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -841,17 +830,17 @@ PrefabInstance:
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -1119,7 +1108,7 @@ GameObject:
   - component: {fileID: 456374210}
   - component: {fileID: 456374209}
   m_Layer: 0
-  m_Name: Sub Camera (1)
+  m_Name: Sub Camera Blue
   m_TagString: SubCam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1165,7 +1154,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 456374208}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &456374211
 Camera:
   m_ObjectHideFlags: 0
@@ -1217,8 +1206,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 456374208}
   m_LocalRotation: {x: -0, y: 0.9678507, z: -0, w: 0.2515254}
-  m_LocalPosition: {x: 0.89, y: 2.82, z: 9.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.88999987, y: 2.82, z: 9.25}
+  m_LocalScale: {x: 0.99999994, y: 1, z: 0.99999994}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1326,7 +1315,7 @@ GameObject:
   - component: {fileID: 521380196}
   - component: {fileID: 521380195}
   m_Layer: 0
-  m_Name: Sub Camera
+  m_Name: Sub Camera Red
   m_TagString: SubCam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2411,7 +2400,13 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1321919583}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1171931843
+--- !u!4 &1171931845 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1321919583}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1171931846
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2424,7 +2419,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 234283991}
-  subCamera: {fileID: 521380197}
+  subCameraRed: {fileID: 521380197}
+  subCameraBlue: {fileID: 456374211}
   ballers: []
 --- !u!1 &1246374892
 GameObject:
@@ -2463,12 +2459,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1299352133 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
+    type: 3}
+  m_PrefabInstance: {fileID: 248593081}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1321919583
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1764728786}
     m_Modifications:
     - target: {fileID: 391556805084306342, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -2498,7 +2500,7 @@ PrefabInstance:
     - target: {fileID: 2872845418366116977, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_Name
-      value: CamZone (1)
+      value: CamZone Red
       objectReference: {fileID: 0}
     - target: {fileID: 2872845418366116977, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -2508,7 +2510,7 @@ PrefabInstance:
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -2533,17 +2535,17 @@ PrefabInstance:
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3675210259649589837, guid: 666202a7dff9a394b9be5a532ecc8b9f,
         type: 3}
@@ -3259,6 +3261,8 @@ Transform:
   - {fileID: 1666037205}
   - {fileID: 1421243706}
   - {fileID: 1919848766}
+  - {fileID: 1171931845}
+  - {fileID: 1299352133}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3696,7 +3700,6 @@ GameObject:
   - component: {fileID: 2030358079}
   - component: {fileID: 2030358083}
   - component: {fileID: 2030358084}
-  - component: {fileID: 2030358085}
   m_Layer: 6
   m_Name: ZoneOne
   m_TagString: ZoneOne
@@ -3746,21 +3749,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10.08308, y: 1, z: 10.030462}
   m_Center: {x: -0.08516636, y: 0, z: 0.031761102}
---- !u!114 &2030358085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2030358078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f612185efaa011a42b9e3178bb3ed375, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainCamera: {fileID: 234283991}
-  subCamera: {fileID: 521380197}
-  ballers: []
 --- !u!4 &2062110504 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 374ad28a3f94b5645a61cb3998cd0981,
