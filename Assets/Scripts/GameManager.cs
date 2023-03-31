@@ -1,6 +1,10 @@
 using Assets.Scripts.AI.State_Machine.Demo_StateMachine;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+
+
 
 namespace Assets.Scripts
 {
@@ -9,12 +13,14 @@ namespace Assets.Scripts
         // Start is called before the first frame update
         private static GameManager _instance;
         public List<Baller> Ballers = new List<Baller>();
-        public Dictionary<string, int> Scores = new Dictionary<string, int>() { { "Team 1", 0 } , {"Team 2", 0} };
+        public Dictionary<string, int> Scores = new Dictionary<string, int>() { { "Team 1", 0 }, { "Team 2", 0 } };
         public Color TeamOneColor = Color.red;
         public Color TeamTwoColor = Color.blue;
-       
+        public TextMeshProUGUI scoreTeam1;
+        public TextMeshProUGUI scoreTeam2;
+
         public static GameManager Instance
-        
+
         {
             get
             {
@@ -25,7 +31,7 @@ namespace Assets.Scripts
 
                 return _instance;
             }
-        
+
 
         }
 
@@ -34,12 +40,13 @@ namespace Assets.Scripts
         {
 
         }
+
         void Start()
         {
             var teamOneHoopMesh = GameObject.FindGameObjectWithTag("HoopOne").GetComponent<MeshRenderer>();
             var teamTwoHoopMesh = GameObject.FindGameObjectWithTag("HoopTwo").GetComponent<MeshRenderer>();
             var materialTeamOne = teamOneHoopMesh.material;
-            materialTeamOne.SetColor("_BallerTeamColor",GameManager.Instance.TeamOneColor);
+            materialTeamOne.SetColor("_BallerTeamColor", GameManager.Instance.TeamOneColor);
             teamOneHoopMesh.material = materialTeamOne;
             var materialTeamTwo = teamTwoHoopMesh.material;
             materialTeamTwo.SetColor("_BallerTeamColor", GameManager.Instance.TeamTwoColor);
@@ -49,7 +56,9 @@ namespace Assets.Scripts
         // Update is called once per frame
         void Update()
         {
-        
+            scoreTeam2.text = GameManager.Instance.Scores["Team 1"].ToString();
+            scoreTeam1.text = GameManager.Instance.Scores["Team 2"].ToString();
         }
+
     }
 }

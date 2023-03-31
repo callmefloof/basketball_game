@@ -71,12 +71,14 @@ namespace Assets.Scripts.Objects
                 switch (team)
                 {
                     case 1:
-                        GameManager.Instance.Scores["Team 2"]++;
-                        Debug.Log("Team 1 scored");
+                        
+                        GameManager.Instance.Scores["Team 2"]+=2;
+                        Debug.Log("Team 2 scored");
                         break;
                     case 2:
-                        GameManager.Instance.Scores["Team 1"]++;
-                        Debug.Log("Team 2 scored");
+                        
+                        GameManager.Instance.Scores["Team 1"]+=2;
+                        Debug.Log("Team 1 scored");
                         break;
 
                 }

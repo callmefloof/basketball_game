@@ -95,7 +95,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     }
     private bool ShouldShoot()
     {
-        if (owner.heldBall  && IsCloseToEnemyHoop() && !IsEnemyNear(owner.transform.position, 1f))
+        if (owner.heldBall  && IsCloseToEnemyHoop())
         {
             return true;
         }
@@ -151,6 +151,11 @@ public class BallerDecisionTree : EnvironmentInfoComponent
     {
         if (owner.heldBall)
         {
+            if (!IsEnemyNearbyTeammate())
+            {
+                return true;
+            }
+            
             foreach (var teammate in environment.Team)
             {
                 if (teammate != owner && !teammate.heldBall && !IsEnemyNearbyTeammate())
@@ -163,12 +168,11 @@ public class BallerDecisionTree : EnvironmentInfoComponent
             {
                 return true;
             }
+            
+           
         }
         
-        if (IsEnemyNearbyTeammate())
-        {
-            return false;
-        }
+       
         
         return false;
     }
@@ -232,7 +236,7 @@ public class BallerDecisionTree : EnvironmentInfoComponent
         // Return true if they are, false otherwise
         GameObject enemyHoop = GameObject.FindGameObjectWithTag("HoopOne");
         float distanceToHoop = Vector3.Distance(owner.transform.position, enemyHoop.transform.position);
-        return distanceToHoop < 8f;
+        return distanceToHoop < 9f;
     }
 
     private bool EnemyCloseToOurSide()
